@@ -14,4 +14,4 @@ $ cargo run [FILE]...
 
 For the `FILE` format, see the [library documentation](https://letheed.github.io/takuzu/takuzu/index.html). [Examples](grids)
 
-For additional details on the binary, see the [binary documentation](https://letheed.github.io/takuzu/takle/index.html)
+For additional details on the binary, see the [binary documentation](https://letheed.github.io/takuzu/tackle/index.html)

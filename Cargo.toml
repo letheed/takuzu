@@ -1,0 +1,22 @@
+[package]
+name = "takuzu"
+version = "0.1.0"
+authors = ["Letheed <dev@daweb.se>"]
+description = "A solver for Takuzu (a.k.a. Binairo) number puzzles"
+documentation = "https://letheed.github.io/takuzu"
+homepage = "https://crates.io/crates/takuzu"
+repository = "https://github.com/Letheed/takuzu"
+readme = "README.md"
+keywords = ["takuzu", "binairo", "sudoku", "puzzle"]
+license = "MIT"
+
+[dependencies]
+libc = "*"
+
+[lib]
+name = "takuzu"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tackle"
+path = "src/main.rs"

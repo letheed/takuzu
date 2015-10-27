@@ -22,6 +22,11 @@
 //! (The final `\n` can be omitted though.)
 //!
 //! [Example grids](https://github.com/Letheed/takuzu/tree/master/grids)
+//!
+//! ## Sources
+//!
+//! Check out the [Repository](https://github.com/Letheed/takuzu)
+
 
 #![warn(missing_docs)]
 #![feature(slice_patterns)]

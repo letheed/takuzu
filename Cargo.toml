@@ -7,7 +7,7 @@ documentation = "https://letheed.github.io/takuzu"
 homepage = "https://crates.io/crates/takuzu"
 repository = "https://github.com/Letheed/takuzu"
 readme = "README.md"
-keywords = ["takuzu", "binairo", "sudoku", "puzzle"]
+keywords = ["takuzu", "binairo", "sudoku", "puzzle", "binary"]
 license = "MIT"
 
 [dependencies]

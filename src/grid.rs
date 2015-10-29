@@ -52,35 +52,65 @@ impl Grid {
 
     /// Solves the grid and returns the solution(s).
     pub fn solve(&self) -> Vec<Grid> {
-        let (mut stack, mut solutions) = (Vec::new(), Vec::new());
-        stack.push(self.clone());
-        while stack.len() != 0 {
-            let mut grid = stack.pop().unwrap();
-            if grid.is_filled() {
-                solutions.push(grid);
-            }
-            else {
-                let (mut row, mut col) = (0, 0);
-                'find_empty: for i in 0..grid.size() {
-                    for j in 0..grid.size() {
-                        if grid[(i, j)] == None {
-                            row = i;
-                            col = j;
-                            break 'find_empty
+        let mut grid = self.clone();
+        let (mut stack, mut solutions) = (Vec::<(usize, usize, Option<bool>)>::new(), Vec::new());
+        'main: loop {
+            match grid.next_empty() {
+                None => {
+                    solutions.push(grid.clone());
+                    loop {
+                        match stack.pop() {
+                            None => { return solutions }
+                            Some((i, j, state)) => {
+                                grid[(i, j)] = state;
+                                if state == Some(true) { continue 'main }
+                            }
                         }
                     }
                 }
-                grid[(row, col)] = Some(true);
-                if grid.is_cell_legal(row, col) {
-                    stack.push(grid.clone());
-                }
-                grid[(row, col)] = Some(false);
-                if grid.is_cell_legal(row, col) {
-                    stack.push(grid);
+                Some((i, j)) => {
+                    let previous_state = grid[(i, j)];
+                    grid[(i, j)] = Some(true);
+                    if grid.is_cell_legal(i, j) {
+                        stack.push((i, j, previous_state));
+                        grid[(i, j)] = Some(false);
+                        if grid.is_cell_legal(i, j) {
+                            stack.push((i, j, Some(true)));
+                        }
+                        else {
+                            grid[(i, j)] = Some(true);
+                        }
+                     }
+                    else {
+                        grid[(i, j)] = Some(false);
+                        if grid.is_cell_legal(i, j) {
+                            stack.push((i, j, previous_state));
+                        }
+                        else {
+                            grid[(i, j)] = previous_state;
+                            loop {
+                                match stack.pop() {
+                                    None => { return solutions }
+                                    Some((i, j, state)) => {
+                                        grid[(i, j)] = state;
+                                        if state == Some(true) { continue 'main }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        solutions
+    }
+
+    pub fn next_empty(&self) -> Option<(usize, usize)> {
+        for i in 0..self.0.len() {
+            for j in 0..self.0.len() {
+                if self.0[i][j] == None { return Some((i, j)) }
+            }
+        }
+        None
     }
 
     /// Consumes a `Grid` and returns the underlying array

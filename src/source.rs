@@ -22,6 +22,9 @@ pub trait Source: Read {
     /// # Examples
     ///
     /// ```rust
+    /// # use std::io;
+    /// # use std::io::Write;
+    /// # use takuzu::Source;
     /// let grid = match io::stdin().source() {
     ///     Ok(grid) => grid,
     ///     Err(e) => {

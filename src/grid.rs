@@ -116,10 +116,12 @@ impl Grid {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```no_run
+    /// # use std::io;
+    /// # use takuzu::Source;
     /// let mut grid = io::stdin().source().unwrap();
     /// while grid.apply_rules() {}
-    /// println("{}", grid);
+    /// println!("{}", grid);
     /// ```
     pub fn apply_rules(&mut self) -> bool {
         self.apply_rule1()
@@ -319,7 +321,6 @@ impl Grid {
     /// Disambiguates blank cells after rule 2.
     /// Rule 2: each row and each column should contain an equal number of 0s and 1s.
     fn apply_rule2(&mut self) -> bool {
-        // The number of 1s and 0s on each row and column must match
         let mut rule_applied = false;
         let nmax = self.0.len() / 2;
         for i in 0..self.0.len() {
@@ -359,7 +360,6 @@ impl Grid {
     /// Disambiguates blank cells after rule 3.
     /// Rule 3: no two rows and no two columns can be the same.
     fn apply_rule3(&mut self) -> bool {
-        // You can't have two identical rows or two identical columns
         let mut rule_applied = false;
         for i in 0..self.0.len() {
             if self.0[i].iter().filter(|&&value| value == None).count() == 2 {

@@ -33,7 +33,7 @@ impl IndexMut<(usize, usize)> for Grid {
 
 // Public methods
 impl Grid {
-    /// Creates a `Grid` from a preexisting array
+    /// Creates a `Grid` from a preexisting array.
     ///
     /// # Failure
     ///
@@ -50,7 +50,69 @@ impl Grid {
         Ok(grid)
     }
 
+    /// Returns the size of the grid.
+    pub fn size(&self) -> usize {
+        self.0.len()
+    }
+
+    /// Consumes a `Grid` and returns the underlying array.
+    pub fn into_inner(self) -> Array {
+        self.0
+    }
+
+    /// Returns `true` if the grid contains no empty cell.
+    pub fn is_filled(&self) -> bool {
+        self.0.iter().all(|row| row.iter().all(|tile| tile.is_some()))
+    }
+
+    /// Verifies that the grid does not currently violate any of the rules.
+    /// Returns `true` if the grid is legal.
+    pub fn is_legal(&self) -> bool {
+        self.check_rule1()
+            && self.check_rule2()
+            && self.check_rule3()
+    }
+
+    /// Verifies that a certain cell does not violate any of the rules.
+    /// Returns `true` if the value is legal.
+    pub fn is_cell_legal(&self, row: usize, col: usize) -> bool {
+        self.0[row][col].is_some()
+            && self.check_cell_rule1(row, col)
+            && self.check_cell_rule2(row, col)
+            && self.check_cell_rule3(row, col)
+    }
+
+    /// Returns the index of the first empty cell or None if the grid is filled.
+    pub fn next_empty(&self) -> Option<(usize, usize)> {
+        for i in 0..self.0.len() {
+            for j in 0..self.0.len() {
+                if self.0[i][j] == None { return Some((i, j)) }
+            }
+        }
+        None
+    }
+
+    /// Skims through the grid once for each rule and fills in the blanks
+    /// where the value is unambiguous.
+    /// Returns `true` if the grid was modified.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// # use std::io;
+    /// # use takuzu::Source;
+    /// let mut grid = io::stdin().source().unwrap();
+    /// while grid.apply_rules() {}
+    /// println!("{}", grid);
+    /// ```
+    pub fn apply_rules(&mut self) -> bool {
+        self.apply_rule1()
+            || self.apply_rule2()
+            || self.apply_rule3()
+    }
+
     /// Solves the grid and returns the solution(s).
+    // Comment a little more once finished.
     pub fn solve(&self) -> Vec<Grid> {
         let mut grid = self.clone();
         let (mut stack, mut solutions) = (Vec::<(usize, usize, Option<bool>)>::new(), Vec::new());
@@ -102,66 +164,6 @@ impl Grid {
                 }
             }
         }
-    }
-
-    pub fn next_empty(&self) -> Option<(usize, usize)> {
-        for i in 0..self.0.len() {
-            for j in 0..self.0.len() {
-                if self.0[i][j] == None { return Some((i, j)) }
-            }
-        }
-        None
-    }
-
-    /// Consumes a `Grid` and returns the underlying array
-    pub fn into_inner(self) -> Array {
-        self.0
-    }
-
-    /// Returns the size of the grid
-    pub fn size(&self) -> usize {
-        self.0.len()
-    }
-
-    /// Verifies that the grid does not currently violate any of the rules.
-    /// Returns `true` if the grid is legal.
-    pub fn is_legal(&self) -> bool {
-        self.check_rule1()
-            && self.check_rule2()
-            && self.check_rule3()
-    }
-
-    /// Verifies that a certain tile does not violate any of the rules.
-    /// Returns `true` if the value is legal.
-    pub fn is_cell_legal(&self, row: usize, col: usize) -> bool {
-        self.0[row][col].is_some()
-            && self.check_cell_rule1(row, col)
-            && self.check_cell_rule2(row, col)
-            && self.check_cell_rule3(row, col)
-    }
-
-    /// Skims through the grid once for each rule and fills in the blanks
-    /// where the value is unambiguous.
-    /// Returns `true` if the grid was modified.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// # use std::io;
-    /// # use takuzu::Source;
-    /// let mut grid = io::stdin().source().unwrap();
-    /// while grid.apply_rules() {}
-    /// println!("{}", grid);
-    /// ```
-    pub fn apply_rules(&mut self) -> bool {
-        self.apply_rule1()
-            || self.apply_rule2()
-            || self.apply_rule3()
-    }
-
-    /// Returns `true` if the grid contains no blank.
-    pub fn is_filled(&self) -> bool {
-        self.0.iter().all(|row| row.iter().all(|tile| tile.is_some()))
     }
 
     /// Suitable for terminals.

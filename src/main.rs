@@ -15,7 +15,7 @@ extern crate takuzu;
 use std::fs::File;
 use std::io::{stderr, stdin, Write};
 
-use takuzu::Source;
+use takuzu::{Grid, Source};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const USAGE_STRING: &'static str =
@@ -29,24 +29,48 @@ Options:
     --version    display the version and exit
 "#;
 
-/// Returns `true` if `stdout` is a terminal.
-pub fn isatty_stdout() -> bool {
-    match unsafe { libc::isatty(libc::STDOUT_FILENO) } {
-        1 => true,
-        _ => false,
+fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.contains(&"--help".to_owned()) {
+        print!("{}", USAGE_STRING);
+        return
+    }
+    if args.contains(&"--version".to_owned()) {
+        println!("takle (takuzu) {}", VERSION);
+        return
+    }
+    if args.len() == 0 { solve_from(&mut stdin()); }
+    else {
+        takle(&args[0], args.len() > 1);
+        for filename in args.iter().skip(1) {
+            print!("\n");
+            takle(filename, true);
+        }
     }
 }
 
-/// Main routine for solving a grid from a source.
-///
-/// Reads a grid from a source, triggers the solving algorithm and prints
-/// the result with colors if appropriate (if `stdout` is a terminal).
-/// If there is more than one solution, the grids are separated by
-/// an empty line and preceded by a numbered label.
-///
-/// # Failure
-///
-/// If an error was found, prints it on `stderr` and returns.
+/// Opens a file (or stdin) and feeds
+/// the source to the solving + printing function.
+fn takle(filename: &String, print_filename: bool) {
+    if filename == "-" {
+        if print_filename { println!("-"); }
+        solve_from(&mut stdin());
+    }
+    else {
+        let mut file = match File::open(filename) {
+            Ok(file) => file,
+            Err(err) => {
+                write!(stderr(), "\"{}\": {}\n", filename, err).unwrap();
+                return
+            }
+        };
+        if print_filename { println!("{}", filename); }
+        solve_from(&mut file);
+    }
+}
+
+/// Reads a grid from a source, triggers the solving algorithm
+/// and prints the solutions.
 pub fn solve_from(source: &mut Source) {
     let grid = match source.source() {
         Ok(grid) => grid,
@@ -56,6 +80,15 @@ pub fn solve_from(source: &mut Source) {
         },
     };
     let solutions = grid.solve();
+    print_solutions(&grid, &solutions);
+}
+
+/// Prints the solution(s) to a grid on `stdout`.
+///
+/// Prints the grids with colors if appropriate (if `stdout` is a terminal).
+/// If there is more than one solution, the grids are separated by
+/// an empty line and preceded by a numbered label.
+fn print_solutions(grid: &Grid, solutions: &Vec<Grid>) {
     if solutions.len() == 0 { write!(stderr(), "no solution (bug? I guess I owe you a cookie)\n").unwrap(); }
     else if solutions.len() == 1 {
         if isatty_stdout() { print!("{}", solutions[0].to_string_diff(&grid)); }
@@ -77,41 +110,10 @@ pub fn solve_from(source: &mut Source) {
     }
 }
 
-/// Opens a file (or stdin) and feeds it to the beast.
-fn takle(filename: &String, print_filename: bool) {
-    if filename == "-" {
-        if print_filename { println!("-"); }
-        solve_from(&mut stdin());
-    }
-    else {
-        let mut file = match File::open(filename) {
-            Ok(file) => file,
-            Err(err) => {
-                write!(stderr(), "\"{}\": {}\n", filename, err).unwrap();
-                return
-            }
-        };
-        if print_filename { println!("{}", filename); }
-        solve_from(&mut file);
-    }
-}
-
-fn main() {
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.contains(&"--help".to_owned()) {
-        print!("{}", USAGE_STRING);
-        return
-    }
-    if args.contains(&"--version".to_owned()) {
-        println!("takle (takuzu) {}", VERSION);
-        return
-    }
-    if args.len() == 0 { solve_from(&mut stdin()); }
-    else {
-        takle(&args[0], args.len() > 1);
-        for filename in args.iter().skip(1) {
-            print!("\n");
-            takle(filename, true);
-        }
+/// Returns `true` if `stdout` is a terminal.
+pub fn isatty_stdout() -> bool {
+    match unsafe { libc::isatty(libc::STDOUT_FILENO) } {
+        1 => true,
+        _ => false,
     }
 }

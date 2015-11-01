@@ -37,7 +37,7 @@ impl Grid {
     ///
     /// # Failure
     ///
-    /// Returns an error string with the invalid array if the grid
+    /// Returns an error string and the invalid array if the grid
     /// is not a square of non-nul, even size or if the grid is illegal.
     pub fn new(array: Array) -> Result<Grid, (String, Array)> {
         let grid = Grid(array);
@@ -96,6 +96,14 @@ impl Grid {
     /// where the value is unambiguous.
     /// Returns `true` if the grid was modified.
     ///
+    /// # Warning
+    ///
+    /// Does not guarantee the legality of the modifications.
+    /// For performance reasons, deductions made from a rule are not
+    /// checked for legality against the other rules. This can result in
+    /// grids with no legal solution being filled illegally.
+    /// Grids with one or more legal solution will not be affected.
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -111,11 +119,17 @@ impl Grid {
             || self.apply_rule3()
     }
 
-    /// Solves the grid in place using rules logic.
-    /// Grids that cannot be completed all the way using rules only
-    /// will be filled as much as possible and left unfinished.
-    pub fn solve_rules(&mut self) {
-        while self.apply_rules() {}
+    /// Solves the grid using rules logic.
+    /// Grids with one solution will be returned filled, or partially filled
+    /// up to the point were rules did not suffice.
+    /// Grids with several solutions will returned partially filled.
+    /// Grids with no solution will be returned partially filled or `None`
+    /// will be returned.
+    pub fn solve_rules(&mut self) -> Option<Grid> {
+        let mut grid = self.clone();
+        while grid.apply_rules() {}
+        if grid.is_legal() { Some(grid) }
+        else { None }
     }
 
     /// Solves the grid using a backtracking algorithm
@@ -180,7 +194,8 @@ impl Grid {
     /// The grid is compared to a reference grid.
     /// The cells that differ from the reference will be displayed in color.
     ///
-    /// Red is used when an error was detected. (A `0` or a `1` was overwritten.)
+    /// A red-colored cell signals that `0` or a `1`
+    /// from the reference grid was overwritten.
     pub fn to_string_diff(&self, grid_ref: &Grid) -> String {
         let mut buffer = String::with_capacity(self.0.len() * (self.0.len() * 10 + 1));
         for (row, row_ref) in self.0.iter().zip(grid_ref.0.iter()) {

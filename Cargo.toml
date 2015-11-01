@@ -1,6 +1,6 @@
 [package]
 name = "takuzu"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Letheed <dev@daweb.se>"]
 description = "A solver for Takuzu (a.k.a. Binairo) number puzzles"
 documentation = "https://letheed.github.io/takuzu"
@@ -11,7 +11,7 @@ keywords = ["takuzu", "binairo", "sudoku", "puzzle", "binary"]
 license = "MPL-2.0"
 
 [dependencies]
-libc = "*"
+libc = "^0.1"
 
 [lib]
 name = "takuzu"

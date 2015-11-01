@@ -111,9 +111,17 @@ impl Grid {
             || self.apply_rule3()
     }
 
-    /// Solves the grid and returns the solution(s).
-    // Comment a little more once finished.
-    pub fn solve(&self) -> Vec<Grid> {
+    /// Solves the grid in place using rules logic.
+    /// Grids that cannot be completed all the way using rules only
+    /// will be filled as much as possible and left unfinished.
+    pub fn solve_rules(&mut self) {
+        while self.apply_rules() {}
+    }
+
+    /// Solves the grid using a backtracking algorithm
+    /// and returns an array containing the solution(s).
+    /// If no solution exists, an empty array is returned.
+    pub fn solve_backtrack(&self) -> Vec<Grid> {
         let mut grid = self.clone();
         let (mut stack, mut solutions) = (Vec::<(usize, usize, Option<bool>)>::new(), Vec::new());
         'main: loop {

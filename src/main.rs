@@ -79,7 +79,7 @@ pub fn solve_from(source: &mut Source) {
             return
         },
     };
-    let solutions = grid.solve();
+    let solutions = grid.solve_backtrack();
     print_solutions(&grid, &solutions);
 }
 

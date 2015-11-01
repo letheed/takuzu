@@ -71,7 +71,7 @@ fn takle(filename: &String, print_filename: bool) {
 
 /// Reads a grid from a source, triggers the solving algorithm
 /// and prints the solutions.
-pub fn solve_from(source: &mut Source) {
+pub fn solve_from<T: Source>(source: &mut T) {
     let grid = match source.source() {
         Ok(grid) => grid,
         Err(err) => {

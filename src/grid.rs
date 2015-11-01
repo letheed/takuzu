@@ -125,7 +125,7 @@ impl Grid {
     /// Grids with several solutions will returned partially filled.
     /// Grids with no solution will be returned partially filled or `None`
     /// will be returned.
-    pub fn solve_rules(&mut self) -> Option<Grid> {
+    pub fn solve_rules(&self) -> Option<Grid> {
         let mut grid = self.clone();
         while grid.apply_rules() {}
         if grid.is_legal() { Some(grid) }

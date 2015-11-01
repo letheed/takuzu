@@ -2,7 +2,7 @@ use std::io::Read;
 
 use grid::{Array, Grid};
 
-impl<T> Source for T where T: Read {}
+impl<T: ?Sized> Source for T where T: Read {}
 
 /// The `Source` trait allows to use any implementor of the `Read` trait
 /// as an input source for the grid string format with no additional effort.

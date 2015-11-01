@@ -89,7 +89,7 @@ pub fn solve_from(source: &mut Source) {
 /// If there is more than one solution, the grids are separated by
 /// an empty line and preceded by a numbered label.
 fn print_solutions(grid: &Grid, solutions: &Vec<Grid>) {
-    if solutions.len() == 0 { write!(stderr(), "no solution (bug? I guess I owe you a cookie)\n").unwrap(); }
+    if solutions.len() == 0 { write!(stderr(), "no solution\n").unwrap(); }
     else if solutions.len() == 1 {
         if isatty_stdout() { print!("{}", solutions[0].to_string_diff(&grid)); }
         else { print!("{}", solutions[0]); }

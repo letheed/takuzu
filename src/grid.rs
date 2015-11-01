@@ -171,20 +171,35 @@ impl Grid {
     /// Converts the grid to a string (containing escape characters).
     /// The grid is compared to a reference grid.
     /// The cells that differ from the reference will be displayed in color.
+    ///
+    /// Red is used when an error was detected. (A `0` or a `1` was overwritten.)
     pub fn to_string_diff(&self, grid_ref: &Grid) -> String {
         let mut buffer = String::with_capacity(self.0.len() * (self.0.len() * 10 + 1));
         for (row, row_ref) in self.0.iter().zip(grid_ref.0.iter()) {
             for (tile, tile_ref) in row.iter().zip(row_ref.iter()) {
                 match *tile {
                     Some(true) => {
+                        // No color if nothing changed.
                         if tile == tile_ref { buffer.push('1'); }
-                        else { write!(&mut buffer, "\u{1b}[31m1\u{1b}[0m").unwrap(); }
+                        // Color for 1 if we filled in a blank.
+                        else if *tile_ref == None { write!(&mut buffer, "\u{1b}[33m1\u{1b}[0m").unwrap(); }
+                        // Red for error if we overwrote a 0 (should never happen).
+                        else { write!(&mut buffer, "\u{1b}[31m0\u{1b}[0m").unwrap(); }
                     },
                     Some(false) => {
+                        // No color if nothing changed.
                         if tile == tile_ref { buffer.push('0'); }
-                        else { write!(&mut buffer, "\u{1b}[34m0\u{1b}[0m").unwrap(); }
+                        // Color for 0 if we filled in a blank.
+                        else if *tile_ref == None { write!(&mut buffer, "\u{1b}[34m0\u{1b}[0m").unwrap(); }
+                        // Red for error if we overwrote a 1 (should never happen).
+                        else { write!(&mut buffer, "\u{1b}[31m0\u{1b}[0m").unwrap(); }
                     },
-                    None => { buffer.push('.'); }
+                    None => {
+                        // No color if nothing changed.
+                        if tile == tile_ref { buffer.push('.'); }
+                        // Red for error if we overwrote a 0 or a 1 (should never happen).
+                        else { write!(&mut buffer, "\u{1b}[31m0\u{1b}[0m").unwrap(); }
+                    }
                 }
             }
             buffer.push('\n');

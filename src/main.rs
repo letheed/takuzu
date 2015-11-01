@@ -105,7 +105,7 @@ fn print_solutions(grid: &Grid, solutions: &Vec<Grid>) {
         }
         else {
             print!("{}", solutions[0]);
-            for sol in solutions.into_iter() { print!("\n{}", sol); }
+            for sol in solutions.into_iter().skip(1) { print!("\n{}", sol); }
         }
     }
 }

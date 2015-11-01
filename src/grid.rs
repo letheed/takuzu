@@ -119,74 +119,106 @@ impl Grid {
             || self.apply_rule3()
     }
 
+    /// Solves the grid using both rules logic and a backtracking algorithm,
+    /// and returns an array containing the solution(s).
+    /// If no solution exists, an empty array is returned.
+    pub fn solve(&self) -> Vec<Grid> {
+        let (mut stack, mut solutions) = (Vec::new(), Vec::new());
+        let mut grid = self.clone();
+        while grid.apply_rules() {}
+        stack.push(grid);
+        while stack.len() != 0 {
+            let mut grid = stack.pop().unwrap();
+            match grid.next_empty() {
+                Some((row, col)) => {
+                    grid[(row, col)] = Some(true);
+                    if grid.is_cell_legal(row, col) {
+                        let mut grid = grid.clone();
+                        while grid.apply_rules() {}
+                        stack.push(grid);
+                    }
+                    grid[(row, col)] = Some(false);
+                    if grid.is_cell_legal(row, col) {
+                        while grid.apply_rules() {}
+                        stack.push(grid);
+                    }
+                },
+                None => {
+                    if grid.is_legal() { solutions.push(grid); }
+                }
+            }
+        }
+        solutions
+    }
+
     /// Solves the grid using rules logic.
     /// Grids with one solution will be returned filled, or partially filled
     /// up to the point were rules did not suffice.
     /// Grids with several solutions will returned partially filled.
     /// Grids with no solution will be returned partially filled or `None`
     /// will be returned.
-    pub fn solve_rules(&self) -> Option<Grid> {
-        let mut grid = self.clone();
-        while grid.apply_rules() {}
-        if grid.is_legal() { Some(grid) }
-        else { None }
-    }
+    // pub fn solve_rules(&self) -> Option<Grid> {
+    //     let mut grid = self.clone();
+    //     while grid.apply_rules() {}
+    //     if grid.is_legal() { Some(grid) }
+    //     else { None }
+    // }
 
     /// Solves the grid using a backtracking algorithm
     /// and returns an array containing the solution(s).
     /// If no solution exists, an empty array is returned.
-    pub fn solve_backtrack(&self) -> Vec<Grid> {
-        let mut grid = self.clone();
-        let (mut stack, mut solutions) = (Vec::<(usize, usize, Option<bool>)>::new(), Vec::new());
-        'main: loop {
-            match grid.next_empty() {
-                None => {
-                    solutions.push(grid.clone());
-                    loop {
-                        match stack.pop() {
-                            None => { return solutions }
-                            Some((i, j, state)) => {
-                                grid[(i, j)] = state;
-                                if state == Some(true) { continue 'main }
-                            }
-                        }
-                    }
-                }
-                Some((i, j)) => {
-                    let previous_state = grid[(i, j)];
-                    grid[(i, j)] = Some(true);
-                    if grid.is_cell_legal(i, j) {
-                        stack.push((i, j, previous_state));
-                        grid[(i, j)] = Some(false);
-                        if grid.is_cell_legal(i, j) {
-                            stack.push((i, j, Some(true)));
-                        }
-                        else {
-                            grid[(i, j)] = Some(true);
-                        }
-                     }
-                    else {
-                        grid[(i, j)] = Some(false);
-                        if grid.is_cell_legal(i, j) {
-                            stack.push((i, j, previous_state));
-                        }
-                        else {
-                            grid[(i, j)] = previous_state;
-                            loop {
-                                match stack.pop() {
-                                    None => { return solutions }
-                                    Some((i, j, state)) => {
-                                        grid[(i, j)] = state;
-                                        if state == Some(true) { continue 'main }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // pub fn solve_backtrack(&self) -> Vec<Grid> {
+    //     let mut grid = self.clone();
+    //     let (mut stack, mut solutions) = (Vec::<(usize, usize, Option<bool>)>::new(), Vec::new());
+    //     'main: loop {
+    //         match grid.next_empty() {
+    //             None => {
+    //                 solutions.push(grid.clone());
+    //                 loop {
+    //                     match stack.pop() {
+    //                         None => { return solutions }
+    //                         Some((i, j, state)) => {
+    //                             grid[(i, j)] = state;
+    //                             if state == Some(true) { continue 'main }
+    //                         }
+    //                     }
+    //                 }
+    //             },
+    //             Some((i, j)) => {
+    //                 let previous_state = grid[(i, j)];
+    //                 grid[(i, j)] = Some(true);
+    //                 if grid.is_cell_legal(i, j) {
+    //                     stack.push((i, j, previous_state));
+    //                     grid[(i, j)] = Some(false);
+    //                     if grid.is_cell_legal(i, j) {
+    //                         stack.push((i, j, Some(true)));
+    //                     }
+    //                     else {
+    //                         grid[(i, j)] = Some(true);
+    //                     }
+    //                  }
+    //                 else {
+    //                     grid[(i, j)] = Some(false);
+    //                     if grid.is_cell_legal(i, j) {
+    //                         stack.push((i, j, previous_state));
+    //                     }
+    //                     else {
+    //                         grid[(i, j)] = previous_state;
+    //                         loop {
+    //                             match stack.pop() {
+    //                                 None => { return solutions }
+    //                                 Some((i, j, state)) => {
+    //                                     grid[(i, j)] = state;
+    //                                     if state == Some(true) { continue 'main }
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     /// Suitable for terminals.
     ///

@@ -79,7 +79,7 @@ pub fn solve_from<T: Source + ?Sized>(source: &mut T) {
             return
         },
     };
-    let solutions = grid.solve_backtrack();
+    let solutions = grid.solve();
     print_solutions(&grid, &solutions);
 }
 

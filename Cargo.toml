@@ -8,7 +8,7 @@ homepage = "https://crates.io/crates/takuzu"
 repository = "https://github.com/Letheed/takuzu"
 readme = "README.md"
 keywords = ["takuzu", "binairo", "sudoku", "puzzle", "binary"]
-license = "MIT"
+license = "MPL-2.0"
 
 [dependencies]
 libc = "*"

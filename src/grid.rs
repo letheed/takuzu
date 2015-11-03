@@ -155,12 +155,12 @@ impl Grid {
         solutions
     }
 
-    /// Solves the grid using rules logic.
-    /// Grids with one solution will be returned filled, or partially filled
-    /// up to the point were rules did not suffice.
-    /// Grids with several solutions will returned partially filled.
-    /// Grids with no solution will be returned partially filled or `None`
-    /// will be returned.
+    // /// Solves the grid using rules logic.
+    // /// Grids with one solution will be returned filled, or partially filled
+    // /// up to the point were rules did not suffice.
+    // /// Grids with several solutions will returned partially filled.
+    // /// Grids with no solution will be returned partially filled or `None`
+    // /// will be returned.
     // pub fn solve_rules(&self) -> Option<Grid> {
     //     let mut grid = self.clone();
     //     while grid.apply_rules() {}
@@ -168,9 +168,9 @@ impl Grid {
     //     else { None }
     // }
 
-    /// Solves the grid using a backtracking algorithm
-    /// and returns an array containing the solution(s).
-    /// If no solution exists, an empty array is returned.
+    // /// Solves the grid using a backtracking algorithm
+    // /// and returns an array containing the solution(s).
+    // /// If no solution exists, an empty array is returned.
     // pub fn solve_backtrack(&self) -> Vec<Grid> {
     //     let mut grid = self.clone();
     //     let (mut stack, mut solutions) = (Vec::<(usize, usize, Option<bool>)>::new(), Vec::new());

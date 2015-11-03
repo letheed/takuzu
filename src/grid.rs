@@ -226,11 +226,11 @@ impl Grid {
 
     /// Suitable for terminals.
     ///
-    /// Converts the grid to a string (containing escape characters).
+    /// Converts the grid to a printable string (containing escape characters).
     /// The grid is compared to a reference grid.
     /// The cells that differ from the reference will be displayed in color.
     ///
-    /// A red-colored cell signals that `0` or a `1`
+    /// A red-colored cell signals that a `0` or a `1`
     /// from the reference grid was overwritten.
     pub fn to_string_diff(&self, grid_ref: &Grid) -> String {
         let mut buffer = String::with_capacity(self.0.len() * (self.0.len() * 10 + 1));

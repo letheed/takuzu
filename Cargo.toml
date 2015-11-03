@@ -2,7 +2,13 @@
 name = "takuzu"
 version = "0.2.0"
 authors = ["Letheed <dev@daweb.se>"]
-description = "A solver for Takuzu (a.k.a. Binairo) number puzzles"
+description = """
+A library for solving Takuzu (a.k.a. Binairo) number puzzles.
+
+The crate also contains an implementation called `tackle`.\
+Use the library if you need integration or would rather write your own main,\
+or clone the repository and run `cargo run --release FILE` for solving away a grid.\
+"""
 documentation = "https://letheed.github.io/takuzu"
 homepage = "https://crates.io/crates/takuzu"
 repository = "https://github.com/Letheed/takuzu"

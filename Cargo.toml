@@ -1,6 +1,6 @@
 [package]
 name = "takuzu"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Letheed <dev@daweb.se>"]
 description = """
 A library for solving Takuzu (a.k.a. Binairo) number puzzles.

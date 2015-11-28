@@ -16,6 +16,11 @@ pub type Array = Vec<Vec<Option<bool>>>;
 /// A container for takuzu grid manipulation.
 ///
 /// It provides the internal logic and other convenience functions.
+/// To create a `Grid` you can:
+///
+/// * create an `Array` yourself and use `Grid::new(array)`.
+/// * use the `FromStr` trait, e.g. by calling `.parse()` on a string.
+/// * use the `Source` trait, i.e. by calling `.source()` on any `Read` implementor.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Grid(Array);
 

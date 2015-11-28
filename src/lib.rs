@@ -38,7 +38,9 @@
 #![feature(slice_patterns)]
 
 pub use grid::{Array, Grid};
+pub use grid::error::{GridError, GridParseError, GridSizeError};
 pub use source::Source;
+pub use source::error::SourceError;
 
 mod grid;
 mod source;

@@ -3,10 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 use std::io::Read;
+use grid::Grid;
+use self::error::SourceError;
 
-use grid::{Array, Grid};
+pub mod error;
 
-impl<T: ?Sized> Source for T where T: Read {}
+impl<T: ?Sized + Read> Source for T {}
 
 /// The `Source` trait allows to use any implementor of the `Read` trait
 /// as an input source for the grid string format with no additional effort.
@@ -20,44 +22,33 @@ pub trait Source: Read {
     /// Returns an error if either the read failed,
     /// a character other than `0`, `1`, `.` or `\n` was found,
     /// or the if the array is invalid (empty or non-square) or illegal.
-    /// If the read and the parsing were successful, the faulty array
-    /// is returned as well.
+    /// If the read was successful and no unexpected character was found,
+    /// the faulty array is returned as well.
     ///
     /// # Examples
     ///
     /// ```rust
+    /// # use std::error::Error;
     /// # use std::io;
     /// # use std::io::Write;
     /// # use takuzu::Source;
     /// let grid = match io::stdin().source() {
     ///     Ok(grid) => grid,
-    ///     Err(e) => {
-    ///         write!(io::stderr(), "Error: {}\n", e.0).unwrap();
+    ///     Err(err) => {
+    ///         write!(io::stderr(), "error: {}\n", err.description()).unwrap();
     ///         return
     ///     },
     /// };
     /// ```
-    fn source(&mut self) -> Result<Grid, (String, Option<Array>)> {
+    fn source(&mut self) -> Result<Grid, SourceError> {
         let buffer = {
             let mut buffer = String::new();
             match self.read_to_string(&mut buffer) {
-                Err(err) => { return Err((format!("{}", err), None)) }
+                Err(err) => { return Err(SourceError::IOError(err)) }
                 _ => {}
             }
             buffer
         };
-        let mut parse_error = false;
-        let array = buffer.lines().map(|line| line.chars()
-                                       .map(|c| match c {
-                                           '0' => Some(false),
-                                           '1' => Some(true),
-                                           '.' => None,
-                                           _ => { parse_error = true; None }
-                                       }).collect())
-                                  .collect();
-        if parse_error {
-            return Err(("found unexpected character(s)".to_owned(), None))
-        }
-        Grid::new(array).map_err(|err| (err.0, Some(err.1)))
+        buffer.parse().map_err(|err| SourceError::ParseError(err))
     }
 }

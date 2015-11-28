@@ -5,6 +5,10 @@
 use std::cmp::min;
 use std::fmt::{Display, Write};
 use std::ops::{Index, IndexMut};
+use std::str::FromStr;
+use self::error::{GridError, GridParseError, GridSizeError};
+
+pub mod error;
 
 /// A raw takuzu grid representation.
 pub type Array = Vec<Vec<Option<bool>>>;
@@ -13,11 +17,31 @@ pub type Array = Vec<Vec<Option<bool>>>;
 ///
 /// It provides the internal logic and other convenience functions.
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct Grid (Array);
+pub struct Grid(Array);
 
 impl Display for Grid {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         f.write_str(&self.to_string())
+    }
+}
+
+impl FromStr for Grid {
+    type Err = GridParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parse_error = false;
+        let array = s.lines().map(|line| line.chars()
+                                  .map(|c| match c {
+                                      '0' => Some(false),
+                                      '1' => Some(true),
+                                      '.' => None,
+                                      _ => { parse_error = true; None }
+                                  }).collect())
+                             .collect();
+        if parse_error {
+            return Err(GridParseError::UnexpectedCharacter)
+        }
+        Grid::new(array).map_err(|err| GridParseError::CreationError(err.0, err.1))
     }
 }
 
@@ -43,13 +67,13 @@ impl Grid {
     ///
     /// Returns an error string and the invalid array if the grid
     /// is not a square of non-nul, even size or if the grid is illegal.
-    pub fn new(array: Array) -> Result<Grid, (String, Array)> {
+    pub fn new(array: Array) -> Result<Grid, (GridError, Array)> {
         let grid = Grid(array);
         if let Some(err) = grid.check_size().err() {
-            return Err((err, grid.0))
+            return Err((GridError::BadSize(err), grid.0))
         }
         if !grid.is_legal() {
-            return Err(("grid is illegal".to_owned(), grid.0))
+            return Err((GridError::Illegal, grid.0))
         }
         Ok(grid)
     }
@@ -275,17 +299,17 @@ impl Grid {
     /// # Failure
     ///
     /// Returns an error string if the grid is not a square of non-nul, even size.
-    fn check_size(&self) -> Result<(), String> {
+    fn check_size(&self) -> Result<(), GridSizeError> {
         let size = self.0.len();
         if size == 0 {
-            return Err("empty grid".to_owned());
+            return Err(GridSizeError::Empty)
         }
         if size % 2 == 1 {
-            return Err("odd number of rows".to_owned())
+            return Err(GridSizeError::OddRowNumber)
         }
-        for (i, row) in self.0.iter().enumerate() {
+        for row in self.0.iter() {
             if row.len() != size {
-                return Err(format!("line {}: not a square", i + 1));
+                return Err(GridSizeError::NotASquare)
             }
         }
         Ok(())

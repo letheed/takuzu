@@ -16,9 +16,9 @@
 extern crate libc;
 extern crate takuzu;
 
+use std::error::Error;
 use std::fs::File;
 use std::io::{stderr, stdin, Write};
-
 use takuzu::{Grid, Source};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -79,7 +79,14 @@ pub fn solve_from<T: Source + ?Sized>(source: &mut T) {
     let grid = match source.source() {
         Ok(grid) => grid,
         Err(err) => {
-            write!(stderr(), "error: {}\n", err.0).unwrap();
+            write!(stderr(), "error: {}", err.description()).unwrap();
+            let mut cause = err.cause();
+            while cause.is_some() {
+                let err = cause.unwrap();
+                write!(stderr(), ": {}", err.description()).unwrap();
+                cause = err.cause();
+            }
+            write!(stderr(), "\n").unwrap();
             return
         },
     };

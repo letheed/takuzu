@@ -12,6 +12,8 @@ use super::Array;
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum GridError {
     /// The grid does not have the right size.
+    ///
+    /// (It should be square, of non-null, even size.)
     BadSize(GridSizeError),
     /// The grid is illegal, that is it infringes at least one of the rules.
     Illegal,

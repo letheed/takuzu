@@ -6,6 +6,7 @@ use std::cmp::min;
 use std::fmt::{Display, Write};
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
+
 use self::error::{GridError, GridParseError, GridSizeError};
 
 pub mod error;
@@ -74,7 +75,7 @@ impl Grid {
     /// is not a square of non-nul, even size or if the grid is illegal.
     pub fn new(array: Array) -> Result<Grid, (GridError, Array)> {
         let grid = Grid(array);
-        if let Some(err) = grid.check_size().err() {
+        if let Err(err) = grid.check_size() {
             return Err((GridError::BadSize(err), grid.0))
         }
         if !grid.is_legal() {
@@ -312,9 +313,9 @@ impl Grid {
         if size % 2 == 1 {
             return Err(GridSizeError::OddRowNumber)
         }
-        for row in self.0.iter() {
+        for (i, row) in self.0.iter().enumerate() {
             if row.len() != size {
-                return Err(GridSizeError::NotASquare)
+                return Err(GridSizeError::NotASquare(i))
             }
         }
         Ok(())

@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 use std::io::Read;
+
 use grid::Grid;
 use self::error::SourceError;
 
@@ -43,12 +44,9 @@ pub trait Source: Read {
     fn source(&mut self) -> Result<Grid, SourceError> {
         let buffer = {
             let mut buffer = String::new();
-            match self.read_to_string(&mut buffer) {
-                Err(err) => { return Err(SourceError::IOError(err)) }
-                _ => {}
-            }
+            try!(self.read_to_string(&mut buffer));
             buffer
         };
-        buffer.parse().map_err(|err| SourceError::ParseError(err))
+        buffer.parse().map_err(|err| SourceError::Parsing(err))
     }
 }

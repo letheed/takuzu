@@ -2,8 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+use std::convert::From;
 use std::error::Error;
 use std::fmt::Display;
+
 use super::Array;
 
 /// An error returned when checking if the grid is well-sized and legal.
@@ -17,7 +19,10 @@ pub enum GridError {
 
 impl Display for GridError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        f.write_str(self.description())
+        match *self {
+            GridError::BadSize(ref err) => write!(f, "{}: {}", self.description(), err),
+            GridError::Illegal => f.write_str(self.description()),
+        }
     }
 }
 
@@ -37,6 +42,12 @@ impl Error for GridError {
     }
 }
 
+impl From<GridSizeError> for GridError {
+    fn from(err: GridSizeError) -> Self {
+        GridError::BadSize(err)
+    }
+}
+
 /// An error returned when parsing a string to create a grid failed.
 #[derive(Clone, Debug, Hash, PartialEq)]
 pub enum GridParseError {
@@ -49,7 +60,10 @@ pub enum GridParseError {
 
 impl Display for GridParseError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        f.write_str(self.description())
+        match *self {
+            GridParseError::CreationError(ref err, _) => write!(f, "{}: {}", self.description(), err),
+            GridParseError::UnexpectedCharacter => f.write_str(self.description()),
+        }
     }
 }
 
@@ -75,14 +89,18 @@ pub enum GridSizeError {
     /// The grid is empty.
     Empty,
     /// The grid is not a square.
-    NotASquare,
+    NotASquare(usize),
     /// The grid has an odd number of rows.
     OddRowNumber,
 }
 
 impl Display for GridSizeError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        f.write_str(self.description())
+        match *self {
+            GridSizeError::Empty => f.write_str(self.description()),
+            GridSizeError::NotASquare(n) => write!(f, "{} (line {})", self.description(), n),
+            GridSizeError::OddRowNumber => f.write_str(self.description()),
+        }
     }
 }
 
@@ -90,7 +108,7 @@ impl Error for GridSizeError {
     fn description(&self) -> &str {
         match *self {
             GridSizeError::Empty => "empty grid",
-            GridSizeError::NotASquare => "not a square",
+            GridSizeError::NotASquare(_) => "not a square",
             GridSizeError::OddRowNumber => "odd number of rows",
         }
     }

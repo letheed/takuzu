@@ -47,6 +47,6 @@ pub trait Source: Read {
             try!(self.read_to_string(&mut buffer));
             buffer
         };
-        buffer.parse().map_err(|err| SourceError::Parsing(err))
+        buffer.parse().map_err(SourceError::Parsing)
     }
 }

@@ -89,6 +89,7 @@ pub enum GridSizeError {
     /// The grid is empty.
     Empty,
     /// The grid is not a square.
+    /// The field contains the line number that triggered the error.
     NotASquare(usize),
     /// The grid has an odd number of rows.
     OddRowNumber,

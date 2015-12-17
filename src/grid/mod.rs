@@ -126,8 +126,11 @@ impl Grid {
         None
     }
 
-    /// Skims through the grid once for each rule and fills in the blanks
-    /// where the value is unambiguous.
+    /// Skims through the grid once, filling in the blanks
+    /// where the value is unambiguous according to one of the rules,
+    /// then returns if the grid was modified or repeats the operation
+    /// for the next rule.
+    ///
     /// Returns `true` if the grid was modified.
     ///
     /// # Warning
@@ -136,7 +139,7 @@ impl Grid {
     /// For performance reasons, deductions made from a rule are not
     /// checked for legality against the other rules. This can result in
     /// grids with no legal solution being filled illegally.
-    /// Grids with one or more legal solution will not be affected.
+    /// Grids with one or more legal solution are not affected.
     ///
     /// # Examples
     ///

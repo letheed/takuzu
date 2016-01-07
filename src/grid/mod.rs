@@ -71,7 +71,7 @@ impl Grid {
     ///
     /// # Failure
     ///
-    /// Returns an error string and the invalid array if the grid
+    /// Returns an error enum and the invalid array if the grid
     /// is not a square of non-nul, even size or if the grid is illegal.
     pub fn new(array: Array) -> Result<Grid, (GridError, Array)> {
         let grid = Grid(array);

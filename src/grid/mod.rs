@@ -4,6 +4,7 @@
 
 use std::cmp::min;
 use std::fmt::{Display, Write};
+use std::iter;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;
 
@@ -267,35 +268,33 @@ impl Grid {
     /// from the reference grid was overwritten.
     pub fn to_string_diff(&self, grid_ref: &Grid) -> String {
         let mut buffer = String::with_capacity(self.0.len() * (self.0.len() * 10 + 1));
-        for (row, row_ref) in self.0.iter().zip(grid_ref.0.iter()) {
-            for (cell, cell_ref) in row.iter().zip(row_ref.iter()) {
+        buffer.extend(self.0.iter().zip(grid_ref.0.iter()).flat_map(|(row, row_ref)| {
+            row.iter().zip(row_ref.iter()).map(|(cell, cell_ref)| {
                 match *cell {
                     Some(true) => {
                         // No color if nothing changed.
-                        if cell == cell_ref { buffer.push('1'); }
+                        if cell == cell_ref { "1" }
                         // Color for 1 if we filled in a blank.
-                        else if *cell_ref == None { write!(&mut buffer, "\u{1b}[33m1\u{1b}[0m").unwrap(); }
+                        else if *cell_ref == None { "\u{1b}[33m1\u{1b}[0m" }
                         // Red for error if we overwrote a 0 (should never happen).
-                        else { write!(&mut buffer, "\u{1b}[31m0\u{1b}[0m").unwrap(); }
+                        else { "\u{1b}[31m0\u{1b}[0m" }
                     },
                     Some(false) => {
                         // No color if nothing changed.
-                        if cell == cell_ref { buffer.push('0'); }
+                        if cell == cell_ref { "0" }
                         // Color for 0 if we filled in a blank.
-                        else if *cell_ref == None { write!(&mut buffer, "\u{1b}[34m0\u{1b}[0m").unwrap(); }
+                        else if *cell_ref == None { "\u{1b}[34m0\u{1b}[0m" }
                         // Red for error if we overwrote a 1 (should never happen).
-                        else { write!(&mut buffer, "\u{1b}[31m0\u{1b}[0m").unwrap(); }
+                        else { "\u{1b}[31m0\u{1b}[0m" }
                     },
                     None => {
                         // No color if nothing changed.
-                        if cell == cell_ref { buffer.push('.'); }
+                        if cell == cell_ref { "." }
                         // Red for error if we overwrote a 0 or a 1 (should never happen).
-                        else { write!(&mut buffer, "\u{1b}[31m0\u{1b}[0m").unwrap(); }
+                        else { "\u{1b}[31m0\u{1b}[0m" }
                     }
                 }
-            }
-            buffer.push('\n');
-        }
+            }).chain(iter::repeat("\n").take(1))}));
         buffer
     }
 }
@@ -327,16 +326,13 @@ impl Grid {
     /// Converts the grid to a string.
     fn to_string(&self) -> String {
         let mut buffer = String::with_capacity(self.0.len() * (self.0.len() + 1));
-        for row in self.0.iter() {
-            for cell in row.iter() {
-                match *cell {
-                    Some(true) => { buffer.push('1'); }
-                    Some(false) => { buffer.push('0'); }
-                    None => { buffer.push('.'); }
-                }
+        buffer.extend(self.0.iter().flat_map(|row| row.iter().map(|cell| {
+            match *cell {
+                Some(true) => '1',
+                Some(false) => '0',
+                None => '.',
             }
-            buffer.push('\n');
-        }
+        }).chain(iter::repeat('\n').take(1))));
         buffer
     }
 

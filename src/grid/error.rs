@@ -55,7 +55,7 @@ impl From<GridSizeError> for GridError {
 pub enum GridParseError {
     /// A `Grid` cannot be created from this `Array`.
     CreationError(GridError, Array),
-    /// At least one character other than `0`, `1`, `.` or '\n'
+    /// At least one character other than `0`, `1`, `.` or `\n`
     /// was found in the string.
     UnexpectedCharacter,
 }

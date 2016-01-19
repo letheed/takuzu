@@ -9,7 +9,7 @@ use std::fmt::Display;
 use super::Array;
 
 /// An error returned when checking if the grid is well-sized and legal.
-#[derive(Clone, Debug, Hash, PartialEq)]
+#[derive(Debug)]
 pub enum GridError {
     /// The grid does not have the right size.
     ///
@@ -51,7 +51,7 @@ impl From<GridSizeError> for GridError {
 }
 
 /// An error returned when parsing a string to create a grid failed.
-#[derive(Clone, Debug, Hash, PartialEq)]
+#[derive(Debug)]
 pub enum GridParseError {
     /// A `Grid` cannot be created from this `Array`.
     CreationError(GridError, Array),
@@ -86,7 +86,7 @@ impl Error for GridParseError {
 }
 
 /// An error returned when the grid is not properly sized.
-#[derive(Clone, Debug, Hash, PartialEq)]
+#[derive(Debug)]
 pub enum GridSizeError {
     /// The grid is empty.
     Empty,

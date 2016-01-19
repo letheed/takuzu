@@ -130,7 +130,7 @@ impl Grid {
     /// Skims through the grid once, filling in the blanks
     /// where the value is unambiguous according to one of the rules,
     /// then returns if the grid was modified or repeats the operation
-    /// for the next rule.
+    /// for the next rule. Each rule is applied once at the most.
     ///
     /// Returns `true` if the grid was modified.
     ///
@@ -140,7 +140,7 @@ impl Grid {
     /// For performance reasons, deductions made from a rule are not
     /// checked for legality against the other rules. This can result in
     /// grids with no legal solution being filled illegally.
-    /// Grids with one or more legal solution are not affected.
+    /// Grids with one or more legal solution(s) are not affected.
     ///
     /// # Examples
     ///
@@ -264,8 +264,8 @@ impl Grid {
     /// The grid is compared to a reference grid.
     /// The cells that differ from the reference will be displayed in color.
     ///
-    /// A red-colored cell signals that a `0` or a `1`
-    /// from the reference grid was overwritten.
+    /// A red-colored cell signals that a `0` or a `1` from the reference grid was overwritten.
+    /// (Which, if `grid_ref` is the original grid and `self` is a solution, should *never* happen.)
     pub fn to_string_diff(&self, grid_ref: &Grid) -> String {
         let mut buffer = String::with_capacity(self.0.len() * (self.0.len() * 10 + 1));
         buffer.extend(self.0.iter().zip(grid_ref.0.iter()).flat_map(|(row, row_ref)| {

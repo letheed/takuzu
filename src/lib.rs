@@ -13,11 +13,11 @@
 //! The objective is to fill a grid with `0`s and `1`s while
 //! observing the following rules:
 //!
-//! * no more than two of either number adjacent to each other.
+//! * no more than two of either number adjacent to each other in one direction.
 //! * each row and each column should contain an equal number of `0`s and `1`s.
 //! * no two rows and no two columns can be the same.
 //!
-//! The grids are squares of even length.
+//! The grids are squares of even size.
 //! A valid grid must have one and only one solution.
 //! The solver will find and return all the valid solutions though.
 //!

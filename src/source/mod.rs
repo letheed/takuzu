@@ -22,7 +22,7 @@ pub trait Source: Read {
     ///
     /// Returns an error if either the read failed,
     /// a character other than `0`, `1`, `.` or `\n` was found,
-    /// or the if the array is invalid (empty or non-square) or illegal.
+    /// or the if the array is invalid or illegal.
     /// If the read was successful and no unexpected character was found,
     /// the faulty array is returned as well.
     ///

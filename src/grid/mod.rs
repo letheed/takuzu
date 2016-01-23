@@ -343,11 +343,11 @@ impl Grid {
         for i in 0..self.0.len() {
             for j in 0..self.0.len() - 2 {
                 if self.0[i][j].is_some()
-                    && self.0[i][j] == self.0[i][j + 1]
-                    && self.0[i][j] == self.0[i][j + 2] { return false }
+                    && self.0[i][j] == self.0[i][j+1]
+                    && self.0[i][j] == self.0[i][j+2] { return false }
                 if self.0[j][i].is_some()
-                    && self.0[j][i] == self.0[j + 1][i]
-                    && self.0[j][i] == self.0[j + 2][i] { return false }
+                    && self.0[j][i] == self.0[j+1][i]
+                    && self.0[j][i] == self.0[j+2][i] { return false }
             }
         }
         true
@@ -387,13 +387,13 @@ impl Grid {
     fn check_cell_rule1(&self, row: usize, col: usize) -> bool {
         for i in row.saturating_sub(2)..min(row + 1, self.0.len() - 2) {
             if self.0[i][col].is_some()
-                && self.0[i][col] == self.0[i + 1][col]
-                && self.0[i][col] == self.0[i + 2][col] { return false }
+                && self.0[i][col] == self.0[i+1][col]
+                && self.0[i][col] == self.0[i+2][col] { return false }
         }
         for j in col.saturating_sub(2)..min(col + 1, self.0.len() - 2) {
             if self.0[row][j].is_some()
-                && self.0[row][j] == self.0[row][j + 1]
-                && self.0[row][j] == self.0[row][j + 2] { return false }
+                && self.0[row][j] == self.0[row][j+1]
+                && self.0[row][j] == self.0[row][j+2] { return false }
         }
         true
     }
@@ -431,20 +431,20 @@ impl Grid {
         for i in 0..self.0.len() {
             for j in 0..self.0.len() - 2 {
                 { // horizontal
-                    let trio = &mut self.0[i][j..j + 3];
+                    let trio = (self.0[i][j], self.0[i][j+1], self.0[i][j+2]);
                     match trio {
-                        [None, Some(a), Some(b)] if a == b => { trio[0] = Some(!a); rule_applied = true; }
-                        [Some(a), None, Some(b)] if a == b => { trio[1] = Some(!a); rule_applied = true; }
-                        [Some(a), Some(b), None] if a == b => { trio[2] = Some(!a); rule_applied = true; }
+                        (None, Some(a), Some(b)) if a == b => { self.0[i][j  ] = Some(!a); rule_applied = true; }
+                        (Some(a), None, Some(b)) if a == b => { self.0[i][j+1] = Some(!a); rule_applied = true; }
+                        (Some(a), Some(b), None) if a == b => { self.0[i][j+2] = Some(!a); rule_applied = true; }
                         _ => {},
                     }
                 }
                 { // vertical
-                    let trio = [self.0[j][i], self.0[j + 1][i], self.0[j + 2][i]];
+                    let trio = (self.0[j][i], self.0[j + 1][i], self.0[j+2][i]);
                     match trio {
-                        [None, Some(a), Some(b)] if a == b => { self.0[j    ][i] = Some(!a); rule_applied = true; }
-                        [Some(a), None, Some(b)] if a == b => { self.0[j + 1][i] = Some(!a); rule_applied = true; }
-                        [Some(a), Some(b), None] if a == b => { self.0[j + 2][i] = Some(!a); rule_applied = true; }
+                        (None, Some(a), Some(b)) if a == b => { self.0[j  ][i] = Some(!a); rule_applied = true; }
+                        (Some(a), None, Some(b)) if a == b => { self.0[j+1][i] = Some(!a); rule_applied = true; }
+                        (Some(a), Some(b), None) if a == b => { self.0[j+2][i] = Some(!a); rule_applied = true; }
                         _ => {},
                     }
                 }

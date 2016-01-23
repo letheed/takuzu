@@ -35,7 +35,6 @@
 
 
 #![warn(missing_docs)]
-#![feature(slice_patterns)]
 
 pub use grid::{Array, Grid};
 pub use grid::error::{GridError, GridParseError};

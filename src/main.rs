@@ -34,13 +34,15 @@ Options:
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if args.contains(&"--help".to_owned()) {
-        print!("{}", USAGE_STRING);
-        return
-    }
-    if args.contains(&"--version".to_owned()) {
-        println!("takle (takuzu) {}", VERSION);
-        return
+    for arg in &args {
+        if arg == "--help" {
+            print!("{}", USAGE_STRING);
+            return
+        }
+        else if arg == "--version" {
+            println!("takle (takuzu) {}", VERSION);
+            return
+        }
     }
     if args.len() == 0 { solve_from(&mut stdin()); }
     else {

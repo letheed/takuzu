@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 use std::cmp::min;
-use std::fmt::{Display, Write};
+use std::fmt::Display;
 use std::iter;
 use std::ops::{Index, IndexMut};
 use std::str::FromStr;

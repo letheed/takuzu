@@ -1,6 +1,6 @@
 [root]
 name = "takuzu"
-version = "0.3.3"
+version = "0.4.0"
 dependencies = [
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

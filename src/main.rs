@@ -1,6 +1,7 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
 //! A Takuzu (a.k.a. Binairo) solver.
 //!
@@ -16,9 +17,11 @@
 extern crate libc;
 extern crate takuzu;
 
-use std::fs::File;
-use std::io::{stderr, stdin, Write};
+use std::io::stdin;
 use takuzu::{Grid, Source};
+
+#[macro_use]
+mod macros;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const USAGE_STRING: &'static str =
@@ -46,55 +49,53 @@ fn main() {
     }
     if args.len() == 0 { solve_from(&mut stdin()); }
     else {
-        takle(&args[0], args.len() > 1);
+        tackle(&args[0], args.len() > 1);
         for filename in args.iter().skip(1) {
             print!("\n");
-            takle(filename, true);
+            tackle(filename, true);
         }
     }
 }
 
-/// Opens a file (or stdin) and feeds
-/// the source to the solving + printing function.
-fn takle(filename: &String, print_filename: bool) {
+/// Opens a file (or `stdin`) and feeds
+/// the source to the `solve_from` function.
+pub fn tackle(filename: &String, print_filename: bool) {
     if filename == "-" {
         if print_filename { println!("-"); }
         solve_from(&mut stdin());
     }
     else {
-        let mut file = match File::open(filename) {
-            Ok(file) => file,
-            Err(err) => {
-                write!(stderr(), "\"{}\": {}\n", filename, err).unwrap();
-                return
-            }
-        };
-        if print_filename { println!("{}", filename); }
-        solve_from(&mut file);
+        use std::fs::File;
+
+        match File::open(filename) {
+            Ok(mut file) => {
+                if print_filename { println!("{}", filename); }
+                solve_from(&mut file);
+            },
+            Err(err) => println_err!("\"{}\": {}", filename, err),
+        }
     }
 }
 
 /// Reads a grid from a source, triggers the solving algorithm
 /// and prints the solutions.
 pub fn solve_from<T: Source + ?Sized>(source: &mut T) {
-    let grid = match source.source() {
-        Ok(grid) => grid,
-        Err(err) => {
-            write!(stderr(), "error: {}\n", err).unwrap();
-            return
+    match source.source() {
+        Ok(grid) => match grid.solve() {
+            Ok(solutions) => print_solutions(&grid, &solutions),
+            Err(err) => println_err!("error: {}", err),
         },
-    };
-    let solutions = grid.solve();
-    print_solutions(&grid, &solutions);
+        Err(err) => println_err!("error: {}", err),
+    }
 }
 
-/// Prints the solution(s) to a grid on `stdout`.
+/// Prints a grid's solution(s) to `stdout`.
 ///
 /// Prints the grids with colors if appropriate (if `stdout` is a terminal).
 /// If there is more than one solution, the grids are separated by
 /// an empty line and preceded by a numbered label.
-fn print_solutions(grid: &Grid, solutions: &Vec<Grid>) {
-    if solutions.len() == 0 { write!(stderr(), "no solution\n").unwrap(); }
+pub fn print_solutions(grid: &Grid, solutions: &Vec<Grid>) {
+    if solutions.len() == 0 { println_err!("no solution") }
     else if solutions.len() == 1 {
         if isatty_stdout() { print!("{}", solutions[0].to_string_diff(&grid)); }
         else { print!("{}", solutions[0]); }

@@ -1,28 +1,29 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
+use self::SourceError::*;
+use grid::error::GridParseError;
 use std::convert::From;
 use std::error::Error;
-use std::fmt::Display;
-use std::io::Error as IOError;
-
-use grid::error::GridParseError;
+use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::io::Error as IoError;
 
 /// An error returned by the `source` method when either reading or parsing failed.
 #[derive(Debug)]
 pub enum SourceError {
     /// Reading from the source failed.
-    IO(IOError),
+    Io(Box<IoError>),
     /// Parsing failed.
-    Parsing(GridParseError),
+    Parsing(Box<GridParseError>),
 }
 
 impl Display for SourceError {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match *self {
-            SourceError::IO(ref err) => write!(f, "{}: {}", self.description(), err),
-            SourceError::Parsing(ref err) => write!(f, "{}: {}", self.description(), err),
+            Io(ref err)      => write!(f, "{}: {}", self.description(), err),
+            Parsing(ref err) => write!(f, "{}: {}", self.description(), err),
         }
     }
 }
@@ -30,27 +31,27 @@ impl Display for SourceError {
 impl Error for SourceError {
     fn description(&self) -> &str {
         match *self {
-            SourceError::IO(_) => "read failed",
-            SourceError::Parsing(_) => "parsing failed"
+            Io(_)      => "read failed",
+            Parsing(_) => "parsing failed"
         }
     }
 
     fn cause(&self) -> Option<&Error> {
         match *self {
-            SourceError::IO(ref err) => Some(err),
-            SourceError::Parsing(ref err) => Some(err),
+            Io(ref err)      => Some(err),
+            Parsing(ref err) => Some(err),
         }
     }
 }
 
-impl From<IOError> for SourceError {
-    fn from(err: IOError) -> Self {
-        SourceError::IO(err)
+impl From<IoError> for SourceError {
+    fn from(err: IoError) -> Self {
+        Io(Box::new(err))
     }
 }
 
 impl From<GridParseError> for SourceError {
     fn from(err: GridParseError) -> Self {
-        SourceError::Parsing(err)
+        Parsing(Box::new(err))
     }
 }

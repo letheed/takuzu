@@ -1,11 +1,11 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-use std::io::Read;
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 
 use grid::Grid;
 use self::error::SourceError;
+use std::io::Read;
 
 pub mod error;
 
@@ -15,16 +15,15 @@ impl<T: ?Sized + Read> Source for T {}
 /// as an input source for the grid string format with no additional effort.
 pub trait Source: Read {
     /// Creates a `Grid` from a readable source.
-    /// Reads from the source until EOF, parses the data as a string,
-    /// then checks the array for size and legality and converts it to a `Grid`
     ///
-    /// # Failure
+    /// Reads from the source until EOF, parses the data as a string,
+    /// checking that the size is correct, then decodes it and returns `Grid`.
+    ///
+    /// # Errors
     ///
     /// Returns an error if either the read failed,
     /// a character other than `0`, `1`, `.` or `\n` was found,
-    /// or the if the array is invalid or illegal.
-    /// If the read was successful and no unexpected character was found,
-    /// the faulty array is returned as well.
+    /// or the array isn't properly sized.
     ///
     /// # Examples
     ///
@@ -42,11 +41,8 @@ pub trait Source: Read {
     /// };
     /// ```
     fn source(&mut self) -> Result<Grid, SourceError> {
-        let buffer = {
-            let mut buffer = String::new();
-            try!(self.read_to_string(&mut buffer));
-            buffer
-        };
-        buffer.parse().map_err(SourceError::Parsing)
+        let mut buffer = String::new();
+        try!(self.read_to_string(&mut buffer));
+        Ok(try!(buffer.parse()))
     }
 }

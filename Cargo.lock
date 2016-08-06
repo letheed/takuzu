@@ -10,3 +10,5 @@ name = "libc"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
+[metadata]
+"checksum libc 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)" = "39dfaaa0f4da0f1a06876c5d94329d739ad0150868069cc235f1ddf80a0480e7"

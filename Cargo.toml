@@ -2,15 +2,11 @@
 name = "takuzu"
 version = "0.4.0"
 authors = ["Letheed <dev@daweb.se>"]
-description = """
-A library for solving Takuzu (a.k.a. Binairo) number puzzles.
-The crate also contains an implementation called `tackle`. \
-"""
-documentation = "https://letheed.github.io/takuzu/takuzu"
-homepage = "https://github.com/Letheed/takuzu"
-repository = "https://github.com/Letheed/takuzu"
+description = "Takuzu (a.k.a. Binairo) number puzzle solver"
+documentation = "https://letheed.github.io/takuzu"
+repository = "https://github.com/letheed/takuzu"
 readme = "README.md"
-keywords = ["takuzu", "binairo", "sudoku", "puzzle", "binary"]
+keywords = ["takuzu", "binairo", "solver", "puzzle", "binary"]
 license = "MPL-2.0"
 
 [dependencies]

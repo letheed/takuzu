@@ -8,8 +8,8 @@
 //! # Usage
 //!
 //! ```shell
-//! tackle [FILE]...
-//! tackle {--help | --version}
+//! takuzu-solver [FILE]...
+//! takuzu-solver {--help | --version}
 //! ```
 //!
 //! If no `FILE` is provided, or if `FILE` is '`-`', reads from standard input.
@@ -25,8 +25,8 @@ mod macros;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const USAGE_STRING: &'static str =
-r#"Usage: tackle [FILE]...
-       tackle {--help | --version}
+r#"Usage: takuzu-solver [FILE]...
+       takuzu-solver {--help | --version}
 
 If no FILE is provided, or if FILE is "-", read from standard input.
 
@@ -43,23 +43,23 @@ fn main() {
             return
         }
         else if arg == "--version" {
-            println!("takle (takuzu) {}", VERSION);
+            println!("takuzu-solver {}", VERSION);
             return
         }
     }
     if args.len() == 0 { solve_from(&mut stdin()); }
     else {
-        tackle(&args[0], args.len() > 1);
+        solve(&args[0], args.len() > 1);
         for filename in args.iter().skip(1) {
             print!("\n");
-            tackle(filename, true);
+            solve(filename, true);
         }
     }
 }
 
 /// Opens a file (or `stdin`) and feeds
 /// the source to the `solve_from` function.
-pub fn tackle(filename: &String, print_filename: bool) {
+pub fn solve(filename: &String, print_filename: bool) {
     if filename == "-" {
         if print_filename { println!("-"); }
         solve_from(&mut stdin());

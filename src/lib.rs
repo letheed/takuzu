@@ -5,7 +5,7 @@
 
 //! A Takuzu (a.k.a. Binairo) solving library.
 //!
-//! If you are looking for a binary, see [tackle](../tackle/index.html)
+//! If you are looking for a binary, see [takuzu-solver](../takuzu_solver)
 //! for an example of implementation.
 //!
 //! # About

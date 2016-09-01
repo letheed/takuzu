@@ -14,10 +14,10 @@ $ cargo run --release [FILE]...
 or
 ```shell
 $ cargo install takuzu
-$ tackle [FILE]...
+$ takuzu-solver [FILE]...
 ```
 ![solving grid2 screenshot](doc/solving_grid2.png)
 
 For the `FILE` format, see the [library documentation](https://letheed.github.io/takuzu/takuzu/index.html) and the [examples](grids).
 
-For additional details on the binary, see the [binary documentation](https://letheed.github.io/takuzu/tackle/index.html)
+For additional details on the binary, see the [binary documentation](https://letheed.github.io/takuzu/takuzu_solver).

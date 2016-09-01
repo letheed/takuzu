@@ -21,5 +21,5 @@ name = "takuzu"
 path = "src/lib.rs"
 
 [[bin]]
-name = "tackle"
+name = "takuzu-solver"
 path = "src/main.rs"

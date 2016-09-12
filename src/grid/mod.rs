@@ -167,7 +167,7 @@ impl Grid {
     /// Returns an error before any attempt at solving if
     /// the grid breaks any of the rules.
     ///
-    /// Use the function [`is_legal()`](#method.is_legal) to know if the grid will trigger an `Err`.
+    /// Use the [`is_legal()`](#method.is_legal) method to know if the grid will trigger an `Err`.
     pub fn solve(&self) -> Result<Vec<Grid>, GridError> {
         if !self.is_legal() { return Err(GridError::Illegal) }
         let (mut stack, mut solutions) = (Vec::new(), Vec::new());

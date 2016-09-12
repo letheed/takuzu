@@ -240,7 +240,7 @@ impl Grid {
                         else { "\u{1b}[31m.\u{1b}[0m" }
                     }
                 }
-            }).chain(iter::repeat("\n").take(1))}));
+            }).chain(iter::once("\n"))}));
         buffer
     }
 }

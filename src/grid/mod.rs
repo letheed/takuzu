@@ -120,7 +120,7 @@ impl Grid {
         &mut self.cells
     }
 
-    /// Returns `true` if the grid contains no empty cell.
+    /// Returns `true` if the grid contains no `Empty` cell.
     pub fn is_filled(&self) -> bool {
         self.cells.iter().all(|cell| cell.is_filled())
     }
@@ -145,7 +145,7 @@ impl Grid {
         }
     }
 
-    /// Returns the index of the first empty cell or `None` if the grid is filled.
+    /// Returns the index of the first `Empty` cell or `None` if the grid is filled.
     pub fn next_empty(&self) -> Option<(usize, usize)> {
         for (i, cell) in self.cells.iter().enumerate() {
             if cell.is_empty() {

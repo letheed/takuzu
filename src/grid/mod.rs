@@ -81,7 +81,7 @@ impl FromStr for Grid {
 fn size_from_string(s: &str) -> Result<usize, GridSizeError> {
     use self::error::GridSizeError::*;
 
-    if s.len() == 0 { return Err(EmptyGrid) }
+    if s.is_empty() { return Err(EmptyGrid) }
     let lines = s.lines().collect::<Vec<&str>>();
     let size = lines.len();
     if size % 2 == 1 { return Err(OddNumberSize) }
@@ -174,7 +174,7 @@ impl Grid {
         let mut grid = self.clone();
         while grid.apply_rules() {}
         stack.push(grid);
-        while stack.len() != 0 {
+        while !stack.is_empty() {
             let mut grid = stack.pop().unwrap();
             match grid.next_empty() {
                 Some((row, col)) => {

@@ -47,11 +47,11 @@ fn main() {
             return
         }
     }
-    if args.len() == 0 { solve_from(&mut stdin()); }
+    if args.is_empty() { solve_from(&mut stdin()); }
     else {
         solve(&args[0], args.len() > 1);
         for filename in args.iter().skip(1) {
-            print!("\n");
+            println!("");
             solve(filename, true);
         }
     }
@@ -59,7 +59,7 @@ fn main() {
 
 /// Opens a file (or `stdin`) and feeds
 /// the source to the `solve_from` function.
-pub fn solve(filename: &String, print_filename: bool) {
+pub fn solve(filename: &str, print_filename: bool) {
     if filename == "-" {
         if print_filename { println!("-"); }
         solve_from(&mut stdin());
@@ -94,8 +94,8 @@ pub fn solve_from<T: Source + ?Sized>(source: &mut T) {
 /// Prints the grids with colors if appropriate (if `stdout` is a terminal).
 /// If there is more than one solution, the grids are separated by
 /// an empty line and preceded by a numbered label.
-pub fn print_solutions(grid: &Grid, solutions: &Vec<Grid>) {
-    if solutions.len() == 0 { println_err!("no solution") }
+pub fn print_solutions(grid: &Grid, solutions: &[Grid]) {
+    if solutions.is_empty() { println_err!("no solution") }
     else if solutions.len() == 1 {
         if isatty_stdout() { print!("{}", solutions[0].to_string_diff(&grid)); }
         else { print!("{}", solutions[0]); }

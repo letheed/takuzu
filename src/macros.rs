@@ -4,8 +4,8 @@
  */
 
 macro_rules! println_err {
-    ($($arg: tt)*) => ({
+    ($($args: tt)*) => ({
         use std::io::{Write, stderr};
-        write!(&mut stderr(), "{}\n", format!($($arg)*)).unwrap();
+        writeln!(&mut stderr(), $($args)*).unwrap();
     })
 }

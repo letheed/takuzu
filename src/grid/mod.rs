@@ -13,7 +13,7 @@ use std::str::FromStr;
 pub mod cell;
 pub mod error;
 
-/// A opaque container for takuzu grid manipulation.
+/// An opaque container for takuzu grid manipulation.
 ///
 /// It provides the internal logic and other convenience functions.
 /// To create a `Grid` you can:

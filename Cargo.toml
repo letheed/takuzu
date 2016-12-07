@@ -3,7 +3,7 @@ name = "takuzu"
 version = "0.5.0"
 authors = ["Letheed <dev@daweb.se>"]
 description = "Takuzu (a.k.a. Binairo) number puzzle solver"
-documentation = "https://letheed.github.io/takuzu"
+documentation = "https://docs.rs/takuzu"
 repository = "https://github.com/letheed/takuzu"
 readme = "README.md"
 keywords = ["takuzu", "binairo", "solver", "puzzle", "binary"]
@@ -17,5 +17,5 @@ name = "takuzu"
 path = "src/lib.rs"
 
 [[bin]]
-name = "takuzu-solver"
+name = "takuzu"
 path = "src/main.rs"

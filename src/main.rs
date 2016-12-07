@@ -8,8 +8,8 @@
 //! # Usage
 //!
 //! ```shell
-//! takuzu-solver [FILE]...
-//! takuzu-solver {--help | --version}
+//! takuzu [FILE]...
+//! takuzu {--help | --version}
 //! ```
 //!
 //! If no `FILE` is provided, or if `FILE` is '`-`', reads from standard input.
@@ -24,16 +24,16 @@ use takuzu::{Grid, Source};
 mod macros;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-const USAGE_STRING: &'static str =
-r#"Usage: takuzu-solver [FILE]...
-       takuzu-solver {--help | --version}
+const USAGE_STRING: &'static str = "\
+Usage: takuzu [FILE]...
+       takuzu {--help | --version}
 
-If no FILE is provided, or if FILE is "-", read from standard input.
+If no FILE is provided, or if FILE is '-', read from standard input.
 
 Options:
     --help       display this message and exit
     --version    display the version and exit
-"#;
+";
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -43,7 +43,7 @@ fn main() {
             return
         }
         else if arg == "--version" {
-            println!("takuzu-solver {}", VERSION);
+            println!("takuzu {}", VERSION);
             return
         }
     }
@@ -59,7 +59,7 @@ fn main() {
 
 /// Opens a file (or `stdin`) and feeds
 /// the source to the `solve_from` function.
-pub fn solve(filename: &str, print_filename: bool) {
+fn solve(filename: &str, print_filename: bool) {
     if filename == "-" {
         if print_filename { println!("-"); }
         solve_from(&mut stdin());
@@ -72,20 +72,20 @@ pub fn solve(filename: &str, print_filename: bool) {
                 if print_filename { println!("{}", filename); }
                 solve_from(&mut file);
             },
-            Err(err) => println_err!("\"{}\": {}", filename, err),
+            Err(err) => eprintln!("\"{}\": {}", filename, err),
         }
     }
 }
 
 /// Reads a grid from a source, triggers the solving algorithm
 /// and prints the solutions.
-pub fn solve_from<T: Source + ?Sized>(source: &mut T) {
+fn solve_from<T: Source + ?Sized>(source: &mut T) {
     match source.source() {
         Ok(grid) => match grid.solve() {
             Ok(solutions) => print_solutions(&grid, &solutions),
-            Err(err) => println_err!("error: {}", err),
+            Err(err) => eprintln!("error: {}", err),
         },
-        Err(err) => println_err!("error: {}", err),
+        Err(err) => eprintln!("error: {}", err),
     }
 }
 
@@ -94,8 +94,8 @@ pub fn solve_from<T: Source + ?Sized>(source: &mut T) {
 /// Prints the grids with colors if appropriate (if `stdout` is a terminal).
 /// If there is more than one solution, the grids are separated by
 /// an empty line and preceded by a numbered label.
-pub fn print_solutions(grid: &Grid, solutions: &[Grid]) {
-    if solutions.is_empty() { println_err!("no solution") }
+fn print_solutions(grid: &Grid, solutions: &[Grid]) {
+    if solutions.is_empty() { eprintln!("no solution") }
     else if solutions.len() == 1 {
         if isatty_stdout() { print!("{}", solutions[0].to_string_diff(&grid)); }
         else { print!("{}", solutions[0]); }
@@ -117,7 +117,7 @@ pub fn print_solutions(grid: &Grid, solutions: &[Grid]) {
 }
 
 /// Returns `true` if `stdout` is a terminal.
-pub fn isatty_stdout() -> bool {
+fn isatty_stdout() -> bool {
     match unsafe { libc::isatty(libc::STDOUT_FILENO) } {
         1 => true,
         _ => false,

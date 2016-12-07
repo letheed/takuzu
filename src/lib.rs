@@ -5,9 +5,6 @@
 
 //! A Takuzu (a.k.a. Binairo) solving library.
 //!
-//! If you are looking for a binary, see [takuzu-solver](../takuzu_solver)
-//! for an example of implementation.
-//!
 //! # About
 //!
 //! Takuzu is a number puzzle, sometimes called binary sudoku.
@@ -29,10 +26,6 @@
 //! (The final `\n` may be omitted though.)
 //!
 //! [Example grids](https://github.com/letheed/takuzu/tree/master/grids)
-//!
-//! # Sources
-//!
-//! Check out the [repository](https://github.com/letheed/takuzu).
 
 
 #![warn(missing_docs)]

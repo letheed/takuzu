@@ -41,4 +41,4 @@ $ cargo install takuzu
 $ takuzu [FILE]...
 ```
 
-![solving grid2 screenshot](https://raw.githubusercontent.com/letheed/takuzu/master/docs/solving_grid2.png)
+![solving grid2 screenshot](https://raw.githubusercontent.com/letheed/takuzu/master/img/solving_grid2.png)

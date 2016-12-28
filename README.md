@@ -1,14 +1,12 @@
-# Takuzu solver
+# Takuzu
 
-Library for solving takuzu (a.k.a. binairo) number puzzles.
+A library for solving takuzu (a.k.a. binairo) number puzzles and a binary using the library.
 
-
-### Documentation
+## Documentation
 
 See the [documentation](https://docs.rs/takuzu) and the [example grids](https://github.com/letheed/takuzu/tree/master/grids).
 
-
-### Import
+## Import
 
 Add this to your `Cargo.toml`:
 
@@ -16,29 +14,27 @@ Add this to your `Cargo.toml`:
 [dependencies]
 takuzu = "^0.5"
 ```
-
 and this to your crate root:
 
 ```rust
 extern crate takuzu;
 ```
 
-
-### Solver
+## Solver
 
 The crate also provides a binary. To use the solver:
 
-```shell
-$ git clone https://github.com/letheed/takuzu.git
-$ cd takuzu
-$ cargo run --release [FILE]...
+```bash
+$ cargo install takuzu
+$ takuzu [FILE]...
 ```
 
 or
 
-```shell
-$ cargo install takuzu
-$ takuzu [FILE]...
+```bash
+$ git clone https://github.com/letheed/takuzu.git
+$ cd takuzu
+$ cargo run --release [FILE]...
 ```
 
 ![solving grid2 screenshot](https://raw.githubusercontent.com/letheed/takuzu/master/img/solving_grid2.png)

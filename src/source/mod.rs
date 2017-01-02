@@ -42,7 +42,7 @@ pub trait Source: Read {
     /// ```
     fn source(&mut self) -> Result<Grid, SourceError> {
         let mut buffer = String::new();
-        try!(self.read_to_string(&mut buffer));
-        Ok(try!(buffer.parse()))
+        self.read_to_string(&mut buffer)?;
+        buffer.parse().map_err(Into::into)
     }
 }

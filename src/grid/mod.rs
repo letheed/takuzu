@@ -57,7 +57,7 @@ impl FromStr for Grid {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         use self::error::GridParseError::*;
 
-        let size = try!(size_from_string(s));
+        let size = size_from_string(s)?;
         let char_error = ::std::cell::Cell::new(false);
         let cells = s.lines().flat_map(|line| {
             line.as_bytes().iter().map(|c| match *c as char {

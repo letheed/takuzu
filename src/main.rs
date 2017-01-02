@@ -51,7 +51,7 @@ fn main() {
     else {
         solve(&args[0], args.len() > 1);
         for filename in args.iter().skip(1) {
-            println!("");
+            println!();
             solve(filename, true);
         }
     }

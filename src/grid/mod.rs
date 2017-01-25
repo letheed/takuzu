@@ -200,7 +200,7 @@ impl Grid {
 
     /// Suitable for printing in terminals.
     ///
-    /// Encodes the grid as a printable string (containing escape characters).
+    /// Encodes the grid as a printable string containing ANSI escape codes.
     /// The grid is compared to a reference grid.
     /// The cells that differ from the reference will be displayed in color.
     ///
@@ -208,7 +208,7 @@ impl Grid {
     ///
     /// A red-colored cell signals that a `0` or a `1` from the reference grid
     /// was overwritten. (Which, if `reference` is the original grid
-    /// and `self` is a solution, should *never* happen.)
+    /// and `self` is a solution, should _never_ happen.)
     pub fn to_string_diff(&self, reference: &Grid) -> String {
         use std::iter;
 

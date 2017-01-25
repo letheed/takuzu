@@ -31,7 +31,7 @@ impl Not for Cell {
         match self {
             Zero  => One,
             One   => Zero,
-            Empty => panic!("called `Not` on an `Empty` cell"),
+            Empty => Empty,
         }
     }
 }

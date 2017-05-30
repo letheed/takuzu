@@ -74,12 +74,6 @@ impl Error for GridError {
             Illegal => "grid is illegal",
         }
     }
-
-    fn cause(&self) -> Option<&Error> {
-        match *self {
-            Illegal => None,
-        }
-    }
 }
 
 /// An error returned when the grid is not properly sized.
@@ -97,9 +91,8 @@ pub enum GridSizeError {
 impl Display for GridSizeError {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match *self {
-            EmptyGrid     => f.write_str(self.description()),
+            EmptyGrid | OddNumberSize => f.write_str(self.description()),
             NotASquare(n) => write!(f, "{} (line {})", self.description(), n),
-            OddNumberSize => f.write_str(self.description()),
         }
     }
 }

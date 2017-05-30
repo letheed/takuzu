@@ -21,7 +21,7 @@ use std::io::stdin;
 use takuzu::{Grid, Source};
 
 #[macro_use]
-mod macros;
+mod eprint;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const USAGE_STRING: &'static str = "\
@@ -97,16 +97,16 @@ fn solve_from<T: Source + ?Sized>(source: &mut T) {
 fn print_solutions(grid: &Grid, solutions: &[Grid]) {
     if solutions.is_empty() { eprintln!("no solution") }
     else if solutions.len() == 1 {
-        if isatty_stdout() { print!("{}", solutions[0].to_string_diff(&grid)); }
+        if isatty_stdout() { print!("{}", solutions[0].to_string_diff(grid)); }
         else { print!("{}", solutions[0]); }
     }
     else {
         if isatty_stdout() {
             println!("solution 1");
-            print!("{}", solutions[0].to_string_diff(&grid));
+            print!("{}", solutions[0].to_string_diff(grid));
             for (i, sol) in solutions.into_iter().enumerate().skip(1) {
                 println!("\nsolution {}", i + 1);
-                print!("{}", sol.to_string_diff(&grid));
+                print!("{}", sol.to_string_diff(grid));
             }
         }
         else {

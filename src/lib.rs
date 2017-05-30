@@ -34,6 +34,8 @@ pub use grid::cell::Cell;
 pub use grid::Grid;
 pub use source::Source;
 
+#[macro_use]
+mod ansi;
 mod grid;
 mod source;
 

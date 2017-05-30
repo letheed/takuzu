@@ -84,7 +84,7 @@ fn size_from_string(s: &str) -> Result<usize, GridSizeError> {
     if s.is_empty() { return Err(EmptyGrid) }
     let lines = s.lines().collect::<Vec<&str>>();
     let size = lines.len();
-    if size % 2 == 1 { return Err(OddNumberSize) }
+    if size & 1 == 1 { return Err(OddNumberSize) }
     for (i, line) in lines.iter().enumerate() {
         if line.chars().count() != size { return Err(NotASquare(i)) }
     }
@@ -101,7 +101,7 @@ impl Grid {
         use self::error::GridSizeError::*;
 
         if size == 0 { Err(EmptyGrid) }
-        else if size % 2 == 1 { Err(OddNumberSize) }
+        else if size & 1 == 1 { Err(OddNumberSize) }
         else { Ok(Grid::from_parts(vec![Empty; size * size], size)) }
     }
 
@@ -210,8 +210,6 @@ impl Grid {
     /// was overwritten. (Which, if `reference` is the original grid
     /// and `self` is a solution, should _never_ happen.)
     pub fn to_string_diff(&self, reference: &Grid) -> String {
-        use std::iter;
-
         let size = self.size;
         let mut buffer = String::with_capacity(size * (size * 10 + 1));
         buffer.extend(self.cells.chunks(size).zip(reference.cells.chunks(size)).flat_map(|(row, row_ref)| {
@@ -221,26 +219,26 @@ impl Grid {
                         // No color if nothing changed.
                         if cell == cell_ref { "0" }
                         // Color for 0 if we filled in a blank.
-                        else if cell_ref.is_empty() { "\u{1b}[34m0\u{1b}[0m" }
+                        else if cell_ref.is_empty() { blue!('0') }
                         // Red for error if we overwrote.
-                        else { "\u{1b}[31m0\u{1b}[0m" }
+                        else { red!('0') }
                     },
                     One => {
                         // No color if nothing changed.
                         if cell == cell_ref { "1" }
                         // Color for 1 if we filled in a blank.
-                        else if cell_ref.is_empty() { "\u{1b}[33m1\u{1b}[0m" }
+                        else if cell_ref.is_empty() { yellow!('1') }
                         // Red for error if we overwrote.
-                        else { "\u{1b}[31m1\u{1b}[0m" }
+                        else { red!('1') }
                     },
                     Empty => {
                         // No color if nothing changed.
                         if cell == cell_ref { "." }
                         // Red for error if we overwrote.
-                        else { "\u{1b}[31m.\u{1b}[0m" }
+                        else { red!('.') }
                     }
                 }
-            }).chain(iter::once("\n"))}));
+            }).chain(::std::iter::once("\n"))}));
         buffer
     }
 }
@@ -257,8 +255,8 @@ impl Grid {
     /// * size is odd
     /// * the number of cells is not size²
     fn from_parts(cells: Vec<Cell>, size: usize) -> Self {
-        assert!(size != 0);
-        assert!(size % 2 == 0);
+        assert_ne!(size, 0);
+        assert_eq!(size & 1, 0);
         assert_eq!(cells.len(), size * size);
         Grid {
             cells: cells,

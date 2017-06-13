@@ -12,7 +12,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-takuzu = "^0.5"
+takuzu = "0.6"
 ```
 and this to your crate root:
 

@@ -294,7 +294,7 @@ impl Grid {
                 && triplet[0] == triplet[2] { return false }
             }
         }
-        for i in 0..self.size -2 {
+        for i in 0..self.size - 2 {
             for j in 0..self.size {
                 let cell = self[(i, j)];
                 if cell.is_filled()

@@ -23,8 +23,8 @@ use takuzu::{Grid, Source};
 #[macro_use]
 mod eprint;
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-const USAGE_STRING: &'static str = "\
+static VERSION: &str = env!("CARGO_PKG_VERSION");
+static USAGE_STRING: &str = "\
 Usage: takuzu [FILE]...
        takuzu {--help | --version}
 

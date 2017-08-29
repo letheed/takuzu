@@ -18,5 +18,5 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "takuzu"
-path = "src/main.rs"
+path = "src/bin/main.rs"
 doc = false

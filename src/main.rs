@@ -20,9 +20,6 @@ extern crate takuzu;
 use std::io::stdin;
 use takuzu::{Grid, Source};
 
-#[macro_use]
-mod eprint;
-
 static VERSION: &str = env!("CARGO_PKG_VERSION");
 static USAGE_STRING: &str = "\
 Usage: takuzu [FILE]...

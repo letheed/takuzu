@@ -8,7 +8,7 @@ macro_rules! ansi_esc {
 }
 
 macro_rules! ansi_color {
-    ($color_number:expr) => (concat!(ansi_esc!(), '[', $color_number, "m"));
+    ($color_number:expr) => (concat!(ansi_esc!(), '[', $color_number, 'm'));
 }
 
 macro_rules! ansi_color_reset {

@@ -8,7 +8,7 @@ use std::default::Default;
 use std::ops::Not;
 
 /// An enum representing the state of a cell.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub enum Cell {
     /// Stands for `0`.
     Zero,

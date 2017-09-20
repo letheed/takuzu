@@ -11,7 +11,7 @@ use std::error::Error;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
 /// An error returned when parsing a string to create a grid failed.
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum GridParseError {
     /// The grid does not have the right size.
     ///
@@ -77,7 +77,7 @@ impl Error for GridError {
 }
 
 /// An error returned when the grid is not properly sized.
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum GridSizeError {
     /// The grid is empty.
     EmptyGrid,

@@ -13,7 +13,7 @@ use std::str::FromStr;
 pub mod cell;
 pub mod error;
 
-/// An opaque container for takuzu grid manipulation.
+/// An opaque container for manipulating takuzu grids.
 ///
 /// It provides the internal logic and other convenience functions.
 /// To create a `Grid` you can:
@@ -25,9 +25,9 @@ pub mod error;
 /// The `Grid` type does not maintain any internal invariant. That is,
 /// you can modify the grid as you like and break the rules.
 /// Such grids will not be solved, though.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Grid {
-    cells: Vec<Cell>,
+    cells: Box<[Cell]>,
     size: usize,
 }
 
@@ -56,39 +56,34 @@ impl FromStr for Grid {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         use self::error::GridParseError::*;
+        use self::error::GridSizeError::*;
 
-        let size = size_from_string(s)?;
-        let char_error = ::std::cell::Cell::new(false);
-        let cells = s.lines().flat_map(|line| {
-            line.as_bytes().iter().map(|c| match *c as char {
-                '0' => Zero,
-                '1' => One,
-                '.' => Empty,
-                _   => { char_error.set(true); Empty },
-            })
-        }).collect();
-        if char_error.get() { return Err(UnexpectedCharacter) }
+        if s.is_empty() {
+            return Err(EmptyGrid.into())
+        }
+        let lines: Vec<_> = s.lines().collect();
+        let size = lines.len();
+        if size & 1 == 1 {
+            return Err(OddNumberSize.into())
+        }
+        let mut cells = Vec::with_capacity(size * size);
+        for (i, line) in lines.iter().enumerate() {
+            let mut count: usize = 0;
+            for c in line.chars() {
+                cells.push(match c {
+                    '0' => Zero,
+                    '1' => One,
+                    '.' => Empty,
+                    _   => return Err(UnexpectedCharacter),
+                });
+                count += 1;
+            }
+            if count != size {
+                return Err(NotASquare(i).into())
+            }
+        }
         Ok(Grid::from_parts(cells, size))
     }
-}
-
-/// Verifies that the grid encoded in the string is properly sized.
-/// If successful, returns the size of the grid.
-///
-/// # Errors
-///
-/// Returns an error if the grid is not a square of non-nul, even size.
-fn size_from_string(s: &str) -> Result<usize, GridSizeError> {
-    use self::error::GridSizeError::*;
-
-    if s.is_empty() { return Err(EmptyGrid) }
-    let lines = s.lines().collect::<Vec<&str>>();
-    let size = lines.len();
-    if size & 1 == 1 { return Err(OddNumberSize) }
-    for (i, line) in lines.iter().enumerate() {
-        if line.chars().count() != size { return Err(NotASquare(i)) }
-    }
-    Ok(size)
 }
 
 impl Grid {
@@ -207,8 +202,8 @@ impl Grid {
     /// # Warning
     ///
     /// A red-colored cell signals that a `0` or a `1` from the reference grid
-    /// was overwritten. (Which, if `reference` is the original grid
-    /// and `self` is a solution, should _never_ happen.)
+    /// was overwritten. (If `reference` is the original grid
+    /// and `self` is a solution, this should *never* happen.)
     pub fn to_string_diff(&self, reference: &Grid) -> String {
         let size = self.size;
         let mut buffer = String::with_capacity(size * (size * 10 + 1));
@@ -244,7 +239,7 @@ impl Grid {
 }
 
 impl Grid {
-    /// Creates a `Grid` from an owned array of `Cell`s
+    /// Creates a `Grid` from a `Vec` of `Cell`s
     /// and the size of the grid.
     ///
     /// # Panics
@@ -255,11 +250,11 @@ impl Grid {
     /// * size is odd
     /// * the number of cells is not size²
     fn from_parts(cells: Vec<Cell>, size: usize) -> Self {
-        assert_ne!(size, 0);
-        assert_eq!(size & 1, 0);
-        assert_eq!(cells.len(), size * size);
+        debug_assert_ne!(size, 0);
+        debug_assert_eq!(size & 1, 0);
+        debug_assert_eq!(cells.len(), size * size);
         Grid {
-            cells: cells,
+            cells: cells.into_boxed_slice(),
             size: size,
         }
     }

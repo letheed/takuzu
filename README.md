@@ -4,7 +4,7 @@ A library and a binary for solving takuzu (a.k.a. binairo) number puzzles.
 
 ## Documentation
 
-See the [documentation](https://docs.rs/takuzu) and the [example grids](https://github.com/letheed/takuzu/tree/master/grids).
+See the [documentation][docs] and the [example grids][grids].
 
 ## Usage
 
@@ -15,12 +15,8 @@ $ cargo install takuzu
 $ takuzu [FILE]...
 ```
 
-or
+![solving grid2 screenshot][]
 
-```bash
-$ git clone https://github.com/letheed/takuzu.git
-$ cd takuzu
-$ cargo run --release [FILE]...
-```
-
-![solving grid2 screenshot](https://raw.githubusercontent.com/letheed/takuzu/master/img/solving_grid2.png)
+[docs]: https://docs.rs/takuzu
+[grids]: https://github.com/letheed/takuzu/tree/master/grids
+[solving grid2 screenshot]: https://raw.githubusercontent.com/letheed/takuzu/master/img/solving_grid2.png

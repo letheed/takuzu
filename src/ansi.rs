@@ -4,25 +4,43 @@
  */
 
 macro_rules! ansi_esc {
-    () => ('\u{1b}');
+    () => {
+        '\u{1b}'
+    };
 }
 
 macro_rules! ansi_color {
-    ($color_number:expr) => (concat!(ansi_esc!(), '[', $color_number, 'm'));
+    ($color_number:expr) => {
+        concat!(ansi_esc!(), '[', $color_number, 'm')
+    };
 }
 
 macro_rules! ansi_color_reset {
-    () => (ansi_color!(0));
+    () => {
+        ansi_color!(0)
+    };
+}
+
+macro_rules! mk_color {
+    ($color_number:expr, $str:expr) => {
+        concat!(ansi_color!($color_number), $str, ansi_color_reset!())
+    };
 }
 
 macro_rules! red {
-    ($str:expr) => (concat!(ansi_color!(31), $str, ansi_color_reset!()));
+    ($str:expr) => {
+        mk_color!(31, $str)
+    };
 }
 
 macro_rules! yellow {
-    ($str:expr) => (concat!(ansi_color!(33), $str, ansi_color_reset!()));
+    ($str:expr) => {
+        mk_color!(33, $str)
+    };
 }
 
 macro_rules! blue {
-    ($str:expr) => (concat!(ansi_color!(34), $str, ansi_color_reset!()));
+    ($str:expr) => {
+        mk_color!(34, $str)
+    };
 }

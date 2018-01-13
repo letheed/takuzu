@@ -3,8 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use grid::Grid;
 use self::error::SourceError;
+use grid::Grid;
 use std::io::Read;
 
 pub mod error;
@@ -45,10 +45,12 @@ pub trait Source {
 }
 
 impl<T: ?Sized> Source for T
-    where T: Read {
+where
+    T: Read,
+{
     fn source(&mut self) -> Result<Grid, SourceError> {
         let mut buffer = String::new();
         self.read_to_string(&mut buffer)?;
-        buffer.parse().map_err(Into::into)
+        Ok(buffer.parse()?)
     }
 }

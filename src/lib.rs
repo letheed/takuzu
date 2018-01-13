@@ -3,6 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#![warn(missing_docs)]
+
 //! A Takuzu (a.k.a. Binairo) solving library.
 //!
 //! # About
@@ -27,11 +29,12 @@
 //!
 //! [Example grids](https://github.com/letheed/takuzu/tree/master/grids)
 
+extern crate failure;
 
-#![warn(missing_docs)]
+#[macro_use]
+extern crate failure_derive;
 
-pub use grid::cell::Cell;
-pub use grid::Grid;
+pub use grid::{cell::Cell, Grid};
 pub use source::Source;
 
 #[macro_use]

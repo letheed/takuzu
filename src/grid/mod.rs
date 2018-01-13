@@ -3,8 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use self::cell::Cell;
-use self::cell::Cell::*;
+use self::cell::{Cell, Cell::*};
 use self::error::{GridError, GridParseError, GridSizeError};
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Index, IndexMut};
@@ -59,12 +58,12 @@ impl FromStr for Grid {
         use self::error::GridSizeError::*;
 
         if s.is_empty() {
-            return Err(EmptyGrid.into())
+            return Err(EmptyGrid)?;
         }
         let lines: Vec<_> = s.lines().collect();
         let size = lines.len();
         if size & 1 == 1 {
-            return Err(OddNumberSize.into())
+            return Err(OddNumberSize)?;
         }
         let mut cells = Vec::with_capacity(size * size);
         for (i, line) in lines.iter().enumerate() {
@@ -74,12 +73,12 @@ impl FromStr for Grid {
                     '0' => Zero,
                     '1' => One,
                     '.' => Empty,
-                    _   => return Err(UnexpectedCharacter),
+                    _ => return Err(UnexpectedCharacter),
                 });
                 count += 1;
             }
             if count != size {
-                return Err(NotASquare(i).into())
+                return Err(NotASquare(i))?;
             }
         }
         Ok(Grid::from_parts(cells, size))
@@ -95,9 +94,13 @@ impl Grid {
     pub fn new(size: usize) -> Result<Grid, GridSizeError> {
         use self::error::GridSizeError::*;
 
-        if size == 0 { Err(EmptyGrid) }
-        else if size & 1 == 1 { Err(OddNumberSize) }
-        else { Ok(Grid::from_parts(vec![Empty; size * size], size)) }
+        if size == 0 {
+            Err(EmptyGrid)
+        } else if size & 1 == 1 {
+            Err(OddNumberSize)
+        } else {
+            Ok(Grid::from_parts(vec![Empty; size * size], size))
+        }
     }
 
     /// Returns the number of rows/columns of the array.
@@ -124,9 +127,7 @@ impl Grid {
     ///
     /// Returns `true` if the grid is legal.
     pub fn is_legal(&self) -> bool {
-           self.check_rule1()
-        && self.check_rule2()
-        && self.check_rule3()
+        self.check_rule1() && self.check_rule2() && self.check_rule3()
     }
 
     /// Verifies that a certain cell does not violate any of the rules.
@@ -134,9 +135,8 @@ impl Grid {
     /// Returns `true` if the value is legal.
     pub fn is_cell_legal(&self, row: usize, col: usize) -> bool {
         self[(row, col)].is_empty() || {
-            self.check_cell_rule1(row, col)
-         && self.check_cell_rule2(row, col)
-         && self.check_cell_rule3(row, col)
+            self.check_cell_rule1(row, col) && self.check_cell_rule2(row, col)
+                && self.check_cell_rule3(row, col)
         }
     }
 
@@ -146,7 +146,7 @@ impl Grid {
             if cell.is_empty() {
                 let row = i / self.size;
                 let col = i % self.size;
-                return Some((row, col))
+                return Some((row, col));
             }
         }
         None
@@ -164,7 +164,9 @@ impl Grid {
     ///
     /// Use the [`is_legal()`](#method.is_legal) method to know if the grid will trigger an `Err`.
     pub fn solve(&self) -> Result<Vec<Grid>, GridError> {
-        if !self.is_legal() { return Err(GridError::Illegal) }
+        if !self.is_legal() {
+            return Err(GridError::Illegal);
+        }
         let (mut stack, mut solutions) = (Vec::new(), Vec::new());
         let mut grid = self.clone();
         while grid.apply_rules() {}
@@ -184,9 +186,11 @@ impl Grid {
                         while grid.apply_rules() {}
                         stack.push(grid);
                     }
-                },
+                }
                 None => {
-                    if grid.is_legal() { solutions.push(grid); }
+                    if grid.is_legal() {
+                        solutions.push(grid);
+                    }
                 }
             }
         }
@@ -204,36 +208,38 @@ impl Grid {
     /// A red-colored cell signals that a `0` or a `1` from the reference grid
     /// was overwritten. (If `reference` is the original grid
     /// and `self` is a solution, this should *never* happen.)
+    #[cfg_attr(rustfmt, rustfmt_skip)]
     pub fn to_string_diff(&self, reference: &Grid) -> String {
         let size = self.size;
         let mut buffer = String::with_capacity(size * (size * 10 + 1));
-        buffer.extend(self.cells.chunks(size).zip(reference.cells.chunks(size)).flat_map(|(row, row_ref)| {
-            row.iter().zip(row_ref.iter()).map(|(cell, cell_ref)| {
-                match *cell {
-                    Zero => {
-                        // No color if nothing changed.
-                        if cell == cell_ref { "0" }
-                        // Color for 0 if we filled in a blank.
-                        else if cell_ref.is_empty() { blue!('0') }
-                        // Red for error if we overwrote.
-                        else { red!('0') }
-                    },
-                    One => {
-                        // No color if nothing changed.
-                        if cell == cell_ref { "1" }
-                        // Color for 1 if we filled in a blank.
-                        else if cell_ref.is_empty() { yellow!('1') }
-                        // Red for error if we overwrote.
-                        else { red!('1') }
-                    },
-                    Empty => {
-                        // No color if nothing changed.
-                        if cell == cell_ref { "." }
-                        // Red for error if we overwrote.
-                        else { red!('.') }
+        buffer.extend(
+            self.cells.chunks(size).zip(reference.cells.chunks(size)).flat_map(|(row, row_ref)| {
+                row.iter().zip(row_ref.iter()).map(|(cell, cell_ref)| {
+                    match *cell {
+                        Zero => {
+                            // No color if nothing changed.
+                            if cell == cell_ref { "0" }
+                            // Color for 0 if we filled in a blank.
+                            else if cell_ref.is_empty() { blue!('0') }
+                            // Red for error if we overwrote.
+                            else { red!('0') }
+                        },
+                        One => {
+                            // No color if nothing changed.
+                            if cell == cell_ref { "1" }
+                            // Color for 1 if we filled in a blank.
+                            else if cell_ref.is_empty() { yellow!('1') }
+                            // Red for error if we overwrote.
+                            else { red!('1') }
+                        },
+                        Empty => {
+                            // No color if nothing changed.
+                            if cell == cell_ref { "." }
+                            // Red for error if we overwrote.
+                            else { red!('.') }
+                        }
                     }
-                }
-            }).chain(::std::iter::once("\n"))}));
+                }).chain(::std::iter::once("\n"))}));
         buffer
     }
 }
@@ -255,7 +261,7 @@ impl Grid {
         debug_assert_eq!(cells.len(), size * size);
         Grid {
             cells: cells.into_boxed_slice(),
-            size: size,
+            size,
         }
     }
 
@@ -266,13 +272,13 @@ impl Grid {
         let size = self.size;
         let mut buffer = String::with_capacity(size * (size + 1));
         buffer.extend(self.cells.chunks(size).flat_map(|row| {
-            row.iter().map(|cell| {
-                match *cell {
-                    Zero  => '0',
-                    One   => '1',
+            row.iter()
+                .map(|cell| match *cell {
+                    Zero => '0',
+                    One => '1',
                     Empty => '.',
-                }
-            }).chain(::std::iter::once('\n'))
+                })
+                .chain(::std::iter::once('\n'))
         }));
         buffer
     }
@@ -284,17 +290,17 @@ impl Grid {
     fn check_rule1(&self) -> bool {
         for row in self.cells.chunks(self.size) {
             for triplet in row.windows(3) {
-                if triplet[0].is_filled()
-                && triplet[0] == triplet[1]
-                && triplet[0] == triplet[2] { return false }
+                if triplet[0].is_filled() && triplet[0] == triplet[1] && triplet[0] == triplet[2] {
+                    return false;
+                }
             }
         }
         for i in 0..self.size - 2 {
             for j in 0..self.size {
                 let cell = self[(i, j)];
-                if cell.is_filled()
-                && cell == self[(i+1, j)]
-                && cell == self[(i+2, j)] { return false }
+                if cell.is_filled() && cell == self[(i + 1, j)] && cell == self[(i + 2, j)] {
+                    return false;
+                }
             }
         }
         true
@@ -308,24 +314,28 @@ impl Grid {
         for row in self.cells.chunks(self.size) {
             let count = row.iter().fold((0, 0), |mut count, cell| {
                 match *cell {
-                    Zero  => count.0 += 1,
-                    One   => count.1 += 1,
-                    Empty => {},
+                    Zero => count.0 += 1,
+                    One => count.1 += 1,
+                    Empty => {}
                 }
                 count
             });
-            if count.0 > nmax || count.1 > nmax { return false }
+            if count.0 > nmax || count.1 > nmax {
+                return false;
+            }
         }
         for i in 0..self.size {
             let mut count = (0, 0);
             for j in 0..self.size {
                 match self[(j, i)] {
-                    Zero  => count.0 += 1,
-                    One   => count.1 += 1,
-                    Empty => {},
+                    Zero => count.0 += 1,
+                    One => count.1 += 1,
+                    Empty => {}
                 }
             }
-            if count.0 > nmax || count.1 > nmax { return false }
+            if count.0 > nmax || count.1 > nmax {
+                return false;
+            }
         }
         true
     }
@@ -336,8 +346,14 @@ impl Grid {
     fn check_rule3(&self) -> bool {
         for i in 0..self.size - 1 {
             for j in i + 1..self.size {
-                if (0..self.size).all(|k| self[(i, k)].is_filled() && self[(i, k)] == self[(j, k)]) { return false }
-                if (0..self.size).all(|k| self[(k, i)].is_filled() && self[(k, i)] == self[(k, j)]) { return false }
+                if (0..self.size).all(|k| self[(i, k)].is_filled() && self[(i, k)] == self[(j, k)])
+                {
+                    return false;
+                }
+                if (0..self.size).all(|k| self[(k, i)].is_filled() && self[(k, i)] == self[(k, j)])
+                {
+                    return false;
+                }
             }
         }
         true
@@ -352,15 +368,15 @@ impl Grid {
 
         for i in row.saturating_sub(2)..min(row + 1, self.size - 2) {
             let cell = self[(i, col)];
-            if cell.is_filled()
-            && cell == self[(i+1, col)]
-            && cell == self[(i+2, col)] { return false }
+            if cell.is_filled() && cell == self[(i + 1, col)] && cell == self[(i + 2, col)] {
+                return false;
+            }
         }
         for j in col.saturating_sub(2)..min(col + 1, self.size - 2) {
             let cell = self[(row, j)];
-            if cell.is_filled()
-            && cell == self[(row, j+1)]
-            && cell == self[(row, j+2)] { return false }
+            if cell.is_filled() && cell == self[(row, j + 1)] && cell == self[(row, j + 2)] {
+                return false;
+            }
         }
         true
     }
@@ -373,14 +389,14 @@ impl Grid {
         let mut count = (0, 0, 0, 0);
         for k in 0..self.size {
             match self[(row, k)] {
-                Zero  => count.0 += 1,
-                One   => count.1 += 1,
-                Empty => {},
+                Zero => count.0 += 1,
+                One => count.1 += 1,
+                Empty => {}
             }
             match self[(k, col)] {
-                Zero  => count.2 += 1,
-                One   => count.3 += 1,
-                Empty => {},
+                Zero => count.2 += 1,
+                One => count.3 += 1,
+                Empty => {}
             }
         }
         count.0 <= nmax && count.1 <= nmax && count.2 <= nmax && count.3 <= nmax
@@ -390,14 +406,18 @@ impl Grid {
     ///
     /// Rule 3: no two rows and no two columns can be the same.
     fn check_cell_rule3(&self, row: usize, col: usize) -> bool {
-        let rows_abide = (0..self.size).filter(|&i| i != row && self[(i, col)] == self[(row, col)])
-                                       .map(|i| (0..self.size).all(|j| {
-                                           self[(row, j)].is_filled() && self[(row, j)] == self[(i, j)]
-                                       })).all(|b| !b);
-        let cols_abide = (0..self.size).filter(|&j| j != col && self[(row, j)] == self[(row, col)])
-                                       .map(|j| (0..self.size).all(|i| {
-                                           self[(i, col)].is_filled() && self[(i, col)] == self[(i, j)]
-                                       })).all(|b| !b);
+        let rows_abide = (0..self.size)
+            .filter(|&i| i != row && self[(i, col)] == self[(row, col)])
+            .map(|i| {
+                (0..self.size).all(|j| self[(row, j)].is_filled() && self[(row, j)] == self[(i, j)])
+            })
+            .all(|b| !b);
+        let cols_abide = (0..self.size)
+            .filter(|&j| j != col && self[(row, j)] == self[(row, col)])
+            .map(|j| {
+                (0..self.size).all(|i| self[(i, col)].is_filled() && self[(i, col)] == self[(i, j)])
+            })
+            .all(|b| !b);
         rows_abide && cols_abide
     }
 }
@@ -418,11 +438,8 @@ impl Grid {
     /// grids with no legal solution being filled illegally.
     /// Grids with one or more legal solution(s) are not affected.
     fn apply_rules(&mut self) -> bool {
-           self.apply_rule1()
-        || self.apply_rule2()
-        || self.apply_rule3()
+        self.apply_rule1() || self.apply_rule2() || self.apply_rule3()
     }
-
 
     /// Disambiguates empty cells after rule 1.
     ///
@@ -432,7 +449,8 @@ impl Grid {
         let mut rule_applied = false;
         for i in 0..self.size {
             for j in 0..self.size - 2 {
-                let trio = (self[(i, j)], self[(i, j+1)], self[(i, j+2)]);
+                let trio = (self[(i, j)], self[(i, j + 1)], self[(i, j + 2)]);
+                #[cfg_attr(rustfmt, rustfmt_skip)]
                 match trio {
                     (Empty, Zero, Zero) => { self[(i, j  )] = One;  rule_applied = true; }
                     (Zero, Empty, Zero) => { self[(i, j+1)] = One;  rule_applied = true; }
@@ -442,7 +460,8 @@ impl Grid {
                     (One, One, Empty)   => { self[(i, j+2)] = Zero; rule_applied = true; }
                     _ => {},
                 }
-                let trio = (self[(j, i)], self[(j + 1, i)], self[(j+2, i)]);
+                let trio = (self[(j, i)], self[(j + 1, i)], self[(j + 2, i)]);
+                #[cfg_attr(rustfmt, rustfmt_skip)]
                 match trio {
                     (Empty, Zero, Zero) => { self[(j  , i)] = One;  rule_applied = true; }
                     (Zero, Empty, Zero) => { self[(j+1, i)] = One;  rule_applied = true; }
@@ -453,7 +472,7 @@ impl Grid {
                     _ => {},
                 }
             }
-         }
+        }
         rule_applied
     }
 
@@ -467,38 +486,44 @@ impl Grid {
             let mut count = (0, 0, 0, 0);
             for j in 0..self.size {
                 match self[(i, j)] {
-                    Zero  => count.0 += 1,
-                    One   => count.1 += 1,
-                    Empty => {},
+                    Zero => count.0 += 1,
+                    One => count.1 += 1,
+                    Empty => {}
                 }
                 match self[(j, i)] {
-                    Zero  => count.2 += 1,
-                    One   => count.3 += 1,
-                    Empty => {},
+                    Zero => count.2 += 1,
+                    One => count.3 += 1,
+                    Empty => {}
                 }
             }
             if count.0 == nmax && count.1 != nmax {
                 rule_applied = true;
                 for j in 0..self.size {
-                    if self[(i, j)].is_empty() { self[(i, j)] = One; }
+                    if self[(i, j)].is_empty() {
+                        self[(i, j)] = One;
+                    }
                 }
-            }
-            else if count.1 == nmax && count.0 != nmax {
+            } else if count.1 == nmax && count.0 != nmax {
                 rule_applied = true;
                 for j in 0..self.size {
-                    if self[(i, j)].is_empty() { self[(i, j)] = Zero; }
+                    if self[(i, j)].is_empty() {
+                        self[(i, j)] = Zero;
+                    }
                 }
             }
             if count.2 == nmax && count.3 != nmax {
                 rule_applied = true;
                 for j in 0..self.size {
-                    if self[(j, i)].is_empty() { self[(j, i)] = One; }
+                    if self[(j, i)].is_empty() {
+                        self[(j, i)] = One;
+                    }
                 }
-            }
-            else if count.3 == nmax && count.2 != nmax {
+            } else if count.3 == nmax && count.2 != nmax {
                 rule_applied = true;
                 for j in 0..self.size {
-                    if self[(j, i)].is_empty() { self[(j, i)] = Zero; }
+                    if self[(j, i)].is_empty() {
+                        self[(j, i)] = Zero;
+                    }
                 }
             }
         }
@@ -510,7 +535,9 @@ impl Grid {
     /// Rule 3: no two rows and no two columns can be the same.
     fn apply_rule3(&mut self) -> bool {
         macro_rules! row {
-            ($i: expr) => (self.cells[$i * self.size..($i + 1) * self.size])
+            ($i:expr) => {
+                self.cells[$i * self.size..($i + 1) * self.size]
+            };
         }
 
         let size = self.size;
@@ -518,36 +545,39 @@ impl Grid {
         for i in 0..size {
             if row!(i).iter().filter(|value| value.is_empty()).count() == 2 {
                 for l in 0..size {
-                    if l != i
-                    && !row!(l).contains(&Empty)
-                    && row!(i).iter().zip(row!(l).iter())
-                                     .filter(|&(value, _)| value.is_filled())
-                                     .all(|(value, other)| value == other) {
-                                         for j in 0..size {
-                                             if self[(i, j)].is_empty() {
-                                                 self[(i, j)] = !self[(l, j)];
-                                             }
-                                         }
-                                         rule_applied = true;
-                                         break
-                                     }
+                    if l != i && !row!(l).contains(&Empty)
+                        && row!(i)
+                            .iter()
+                            .zip(row!(l).iter())
+                            .filter(|&(value, _)| value.is_filled())
+                            .all(|(value, other)| value == other)
+                    {
+                        for j in 0..size {
+                            if self[(i, j)].is_empty() {
+                                self[(i, j)] = !self[(l, j)];
+                            }
+                        }
+                        rule_applied = true;
+                        break;
+                    }
                 }
             }
             let j = i;
             if (0..size).filter(|&l| self[(l, j)].is_empty()).count() == 2 {
                 for m in 0..size {
-                    if m != j
-                    && (0..size).all(|i| self[(i, m)].is_filled())
-                    && (0..size).filter(|&i| self[(i, j)].is_filled())
-                                .all(|i| self[(i, j)] == self[(i, m)]) {
-                                    for i in 0..size {
-                                        if self[(i, j)].is_empty() {
-                                            self[(i, j)] = !self[(i, m)];
-                                }
+                    if m != j && (0..size).all(|i| self[(i, m)].is_filled())
+                        && (0..size)
+                            .filter(|&i| self[(i, j)].is_filled())
+                            .all(|i| self[(i, j)] == self[(i, m)])
+                    {
+                        for i in 0..size {
+                            if self[(i, j)].is_empty() {
+                                self[(i, j)] = !self[(i, m)];
                             }
-                            rule_applied = true;
-                            break
                         }
+                        rule_applied = true;
+                        break;
+                    }
                 }
             }
         }

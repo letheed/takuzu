@@ -29,8 +29,8 @@ impl Not for Cell {
 
     fn not(self) -> Self {
         match self {
-            Zero  => One,
-            One   => Zero,
+            Zero => One,
+            One => Zero,
             Empty => Empty,
         }
     }
@@ -41,7 +41,7 @@ impl Cell {
     pub fn is_empty(self) -> bool {
         match self {
             Empty => true,
-            _     => false,
+            _ => false,
         }
     }
 
@@ -49,7 +49,7 @@ impl Cell {
     pub fn is_filled(self) -> bool {
         match self {
             Empty => false,
-            _     => true,
+            _ => true,
         }
     }
 }

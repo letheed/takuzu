@@ -215,7 +215,7 @@ impl Grid {
         buffer.extend(
             self.cells.chunks(size).zip(reference.cells.chunks(size)).flat_map(|(row, row_ref)| {
                 row.iter().zip(row_ref.iter()).map(|(cell, cell_ref)| {
-                    match *cell {
+                    match cell {
                         Zero => {
                             // No color if nothing changed.
                             if cell == cell_ref { "0" }
@@ -273,7 +273,7 @@ impl Grid {
         let mut buffer = String::with_capacity(size * (size + 1));
         buffer.extend(self.cells.chunks(size).flat_map(|row| {
             row.iter()
-                .map(|cell| match *cell {
+                .map(|cell| match cell {
                     Zero => '0',
                     One => '1',
                     Empty => '.',
@@ -313,7 +313,7 @@ impl Grid {
         let nmax = self.size / 2;
         for row in self.cells.chunks(self.size) {
             let count = row.iter().fold((0, 0), |mut count, cell| {
-                match *cell {
+                match cell {
                     Zero => count.0 += 1,
                     One => count.1 += 1,
                     Empty => {}

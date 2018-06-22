@@ -19,7 +19,8 @@ pub mod error;
 ///
 /// * create an empty one yourself with [`Grid::new(size)`](#method.new).
 /// * use the `FromStr` trait, e.g. by calling `.parse()` on a string.
-/// * use the [`Source`](trait.Source.html) trait, i.e. by calling `.source()` on any `Read` implementor.
+/// * use the [`Source`](trait.Source.html) trait,
+///   i.e. by calling `.source()` on any `Read` implementor.
 ///
 /// The `Grid` type does not maintain any internal invariant. That is,
 /// you can modify the grid as you like and break the rules.
@@ -133,14 +134,16 @@ impl Grid {
     /// Verifies that a certain cell does not violate any of the rules.
     ///
     /// Returns `true` if the value is legal.
-    pub fn is_cell_legal(&self, row: usize, col: usize) -> bool {
-        self[(row, col)].is_empty() || {
-            self.check_cell_rule1(row, col) && self.check_cell_rule2(row, col)
-                && self.check_cell_rule3(row, col)
+    pub fn is_cell_legal(&self, coord: (usize, usize)) -> bool {
+        self[coord].is_empty() || {
+            self.check_cell_rule1(coord)
+                && self.check_cell_rule2(coord)
+                && self.check_cell_rule3(coord)
         }
     }
 
-    /// Returns the index of the first `Empty` cell or `None` if the grid is filled.
+    /// Returns the coordinates of the first `Empty` cell
+    /// or `None` if the grid is filled.
     pub fn next_empty(&self) -> Option<(usize, usize)> {
         for (i, cell) in self.cells.iter().enumerate() {
             if cell.is_empty() {
@@ -162,7 +165,8 @@ impl Grid {
     /// Returns an error before any attempt at solving if
     /// the grid breaks any of the rules.
     ///
-    /// Use the [`is_legal()`](#method.is_legal) method to know if the grid will trigger an `Err`.
+    /// Use the [`is_legal()`](#method.is_legal) method to know if the grid
+    /// will trigger an `Err`.
     pub fn solve(&self) -> Result<Vec<Grid>, GridError> {
         if !self.is_legal() {
             return Err(GridError::Illegal);
@@ -174,15 +178,15 @@ impl Grid {
         while !stack.is_empty() {
             let mut grid = stack.pop().unwrap();
             match grid.next_empty() {
-                Some((row, col)) => {
-                    grid[(row, col)] = One;
-                    if grid.is_cell_legal(row, col) {
+                Some(coord) => {
+                    grid[coord] = One;
+                    if grid.is_cell_legal(coord) {
                         let mut grid = grid.clone();
                         while grid.apply_rules() {}
                         stack.push(grid);
                     }
-                    grid[(row, col)] = Zero;
-                    if grid.is_cell_legal(row, col) {
+                    grid[coord] = Zero;
+                    if grid.is_cell_legal(coord) {
                         while grid.apply_rules() {}
                         stack.push(grid);
                     }
@@ -308,7 +312,8 @@ impl Grid {
 
     /// Verifies that the grid abides by rule 2.
     ///
-    /// Rule 2: each row and each column should contain an equal number of 0s and 1s.
+    /// Rule 2: each row and each column should contain an equal number
+    /// of 0s and 1s.
     fn check_rule2(&self) -> bool {
         let nmax = self.size / 2;
         for row in self.cells.chunks(self.size) {
@@ -363,7 +368,7 @@ impl Grid {
     ///
     /// Rule 1: no more than two of either number adjacent to each other
     /// (both vertically and horizontally).
-    fn check_cell_rule1(&self, row: usize, col: usize) -> bool {
+    fn check_cell_rule1(&self, (row, col): (usize, usize)) -> bool {
         use std::cmp::min;
 
         for i in row.saturating_sub(2)..min(row + 1, self.size - 2) {
@@ -383,8 +388,9 @@ impl Grid {
 
     /// Verifies that the cell with the given coordinates abides by rule 2.
     ///
-    /// Rule 2: each row and each column should contain an equal number of 0s and 1s.
-    fn check_cell_rule2(&self, row: usize, col: usize) -> bool {
+    /// Rule 2: each row and each column should contain an equal number
+    /// of 0s and 1s.
+    fn check_cell_rule2(&self, (row, col): (usize, usize)) -> bool {
         let nmax = self.size / 2;
         let mut count = (0, 0, 0, 0);
         for k in 0..self.size {
@@ -405,7 +411,7 @@ impl Grid {
     /// Verifies that the cell with the given coordinates abides by rule 3.
     ///
     /// Rule 3: no two rows and no two columns can be the same.
-    fn check_cell_rule3(&self, row: usize, col: usize) -> bool {
+    fn check_cell_rule3(&self, (row, col): (usize, usize)) -> bool {
         let rows_abide = (0..self.size)
             .filter(|&i| i != row && self[(i, col)] == self[(row, col)])
             .map(|i| {
@@ -478,7 +484,8 @@ impl Grid {
 
     /// Disambiguates empty cells after rule 2.
     ///
-    /// Rule 2: each row and each column should contain an equal number of 0s and 1s.
+    /// Rule 2: each row and each column should contain an equal number
+    /// of 0s and 1s.
     fn apply_rule2(&mut self) -> bool {
         let mut rule_applied = false;
         let nmax = self.size / 2;

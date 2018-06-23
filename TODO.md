@@ -1,1 +1,1 @@
-* replace `Source` with `TryFrom` when it stabilizes
+* Specialize `ToString` when specialization stabilizes.

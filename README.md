@@ -1,6 +1,6 @@
 # Takuzu
 
-A library and a binary for solving takuzu (a.k.a. binairo) number puzzles.
+A library and a binary for solving Takuzu (a.k.a. Binairo) number puzzles.
 
 ## Documentation
 
@@ -11,8 +11,8 @@ See the [documentation][docs] and the [example grids][grids].
 To use the solver:
 
 ```bash
-$ cargo install takuzu
-$ takuzu [FILE]...
+cargo install takuzu
+takuzu [FILE]...
 ```
 
 ![solving grid2 screenshot][]

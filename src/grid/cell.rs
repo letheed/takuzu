@@ -1,20 +1,12 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+use std::{default::Default, ops::Not};
+use Cell::*;
 
-use self::Cell::*;
-use std::default::Default;
-use std::ops::Not;
-
-/// An enum representing the state of a cell.
+///  An enum representing the state of a cell.
+#[allow(missing_docs)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 pub enum Cell {
-    /// Stands for `0`.
     Zero,
-    /// Stands for `1`.
     One,
-    /// Empty cell.
     Empty,
 }
 

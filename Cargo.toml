@@ -1,24 +1,18 @@
 [package]
 name = "takuzu"
-version = "0.6.0"
+version = "1.0.0"
 authors = ["Letheed <letheed@outlook.com>"]
 description = "Takuzu (a.k.a. Binairo) number puzzle solver"
 documentation = "https://docs.rs/takuzu"
 repository = "https://github.com/letheed/takuzu"
 readme = "README.md"
 keywords = ["takuzu", "binairo", "solver", "puzzle", "binary"]
-license = "MPL-2.0"
+license = "MIT"
+edition = "2018"
 
 [dependencies]
 libc = "0.2"
-failure = "0.1"
-failure_derive = "0.1"
+anyhow = "1.0"
 
-[lib]
-name = "takuzu"
-path = "src/lib.rs"
-
-[[bin]]
-name = "takuzu"
-path = "src/bin/main.rs"
-doc = false
+[dev-dependencies]
+lazy_static = "1.4"

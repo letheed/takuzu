@@ -33,24 +33,20 @@ fn main() {
         eprintln!("error: '-' (stdin) must not be mentionned more than once");
         return;
     }
-    let args = {
-        let mut args = args;
-        if args.is_empty() {
-            args.push("-".into());
+    if args.is_empty() {
+        run("-");
+    } else {
+        run(&args[0]);
+        for filename in &args[1..] {
+            println!();
+            run(filename);
         }
-        args
-    };
-    let filename = &args[0];
-    run(filename);
-    for filename in &args[1..] {
-        println!();
-        run(filename);
     }
 }
 
 fn run(filename: &str) {
     match solve_file(filename) {
-        Ok((grid, solutions)) => print_solutions(&grid, &solutions, filename),
+        Ok((grid, solutions)) => print_solutions(filename, &grid, &solutions),
         Err(err) => eprintln!("error: {}{}", filename, DisplayCauses(err)),
     }
 }
@@ -80,58 +76,29 @@ fn read_to_string(filename: &str) -> std::io::Result<String> {
 ///
 /// If `stdout` is a terminal, prints the grids with colors highlighting the
 /// differences with the unsolved original grid.
-fn print_solutions(grid: &Grid, solutions: &[Grid], mut filename: &str) {
+fn print_solutions(mut filename: &str, grid: &Grid, solutions: &[Grid]) {
     if filename == "-" {
         filename = "(stdin)";
     }
-    if solutions.is_empty() {
-        println!("{}: no solution", filename);
-        return;
-    }
-    let mut display = if isatty_stdout() {
-        GridDisplay::GridDiff { reference: &grid, grid: &solutions[0] }
+    if isatty_stdout() {
+        print_loop(filename, solutions, |solution| ANSIGridDiff(&grid, solution));
     } else {
-        GridDisplay::Grid { grid: &solutions[0] }
+        print_loop(filename, solutions, |solution| solution);
     };
-    if solutions.len() == 1 {
-        print!("{}\n{}", filename, display);
-    } else {
-        print!("{}: 1\n{}", filename, display);
-        for (i, solution) in solutions.iter().enumerate().skip(1) {
-            print!("\n{}: {}\n{}", filename, i + 1, display.grid(solution));
-        }
-    }
-}
 
-/// Dynamic dispatch for the display implementation of the grid.
-///
-/// Displays the grid or the colored diff between the grid and the reference.
-enum GridDisplay<'a> {
-    Grid { grid: &'a Grid },
-    GridDiff { reference: &'a Grid, grid: &'a Grid },
-}
-
-/// Displays the grid or the colored diff between the grid and the reference.
-impl<'a> Display for GridDisplay<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
-            GridDisplay::Grid { grid } => grid.fmt(f),
-            GridDisplay::GridDiff { reference, grid } => ANSIGridDiff(reference, grid).fmt(f),
+    #[inline]
+    fn print_loop<'a, D>(filename: &str, solutions: &'a [Grid], format: impl Fn(&'a Grid) -> D)
+    where D: Display {
+        match solutions {
+            [] => println!("{}: no solution", filename),
+            [solution] => print!("{}\n{}", filename, format(solution)),
+            [solution, solutions @ ..] => {
+                print!("{}: 1\n{}", filename, format(solution));
+                for (i, solution) in solutions.iter().enumerate() {
+                    print!("\n{}: {}\n{}", filename, i + 2, format(solution));
+                }
+            }
         }
-    }
-}
-
-/// Setter for the grid to be displayed.
-///
-/// Returns a reference to self for convenience so it can be used inline in a
-/// print statement.
-impl<'a> GridDisplay<'a> {
-    fn grid(&mut self, grid: &'a Grid) -> &Self {
-        match self {
-            GridDisplay::Grid { grid: g } => *g = grid,
-            GridDisplay::GridDiff { grid: g, .. } => *g = grid,
-        }
-        &*self
     }
 }
 

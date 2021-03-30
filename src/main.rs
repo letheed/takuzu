@@ -117,8 +117,5 @@ impl Display for DisplayCauses {
 
 /// Returns `true` if `stdout` is a terminal.
 fn isatty_stdout() -> bool {
-    match unsafe { libc::isatty(libc::STDOUT_FILENO) } {
-        1 => true,
-        _ => false,
-    }
+    matches!(unsafe { libc::isatty(libc::STDOUT_FILENO) }, 1)
 }

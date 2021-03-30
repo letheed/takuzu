@@ -32,17 +32,11 @@ impl Not for Cell {
 impl Cell {
     /// Returns `true` if a cell is `Empty`.
     pub fn is_empty(self) -> bool {
-        match self {
-            Empty => true,
-            _ => false,
-        }
+        matches!(self, Empty)
     }
 
     /// Returns `true` if a cell is `Zero` or `One`.
     pub fn is_filled(self) -> bool {
-        match self {
-            Empty => false,
-            _ => true,
-        }
+        !matches!(self, Empty)
     }
 }

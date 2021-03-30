@@ -26,7 +26,7 @@
 //!
 //! [Example grids](https://github.com/letheed/takuzu/tree/master/grids)
 
-pub use ansi::ANSIGridDiff;
+pub use ansi::AnsiGridDiff;
 pub use grid::{
     cell::Cell,
     error::{GridError, GridParseError, GridSizeError},

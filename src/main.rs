@@ -6,7 +6,7 @@ use std::{
 };
 
 use anyhow::Error;
-use takuzu::{ANSIGridDiff, Grid};
+use takuzu::{AnsiGridDiff, Grid};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const USAGE_STRING: &str = "\
@@ -82,7 +82,7 @@ fn print_solutions(mut filename: &str, grid: &Grid, solutions: &[Grid]) {
         filename = "(stdin)";
     }
     if isatty_stdout() {
-        print_loop(filename, solutions, |solution| ANSIGridDiff(&grid, solution));
+        print_loop(filename, solutions, |solution| AnsiGridDiff(&grid, solution));
     } else {
         print_loop(filename, solutions, |solution| solution);
     };

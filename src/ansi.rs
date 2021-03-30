@@ -57,9 +57,9 @@ use crate::{Cell, Grid};
 /// was overwritten. If `reference` is the original grid and `self`
 /// is a solution, this should *never* happen.
 #[derive(Copy, Clone, Debug)]
-pub struct ANSIGridDiff<'a>(pub &'a Grid, pub &'a Grid);
+pub struct AnsiGridDiff<'a>(pub &'a Grid, pub &'a Grid);
 
-impl Display for ANSIGridDiff<'_> {
+impl Display for AnsiGridDiff<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let ref_size = self.0.size();
         if ref_size != self.1.size() {

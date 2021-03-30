@@ -1,7 +1,8 @@
 #![warn(rust_2018_idioms)]
 
-use lazy_static::lazy_static;
 use std::{fs, path::PathBuf, str};
+
+use lazy_static::lazy_static;
 use takuzu::Grid;
 
 lazy_static! {

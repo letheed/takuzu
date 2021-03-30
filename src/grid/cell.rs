@@ -1,4 +1,5 @@
 use std::{default::Default, ops::Not};
+
 use Cell::*;
 
 ///  An enum representing the state of a cell.

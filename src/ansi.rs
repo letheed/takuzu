@@ -39,8 +39,9 @@ macro_rules! cyan {
     };
 }
 
-use crate::{Cell, Grid};
 use std::fmt::{self, Display};
+
+use crate::{Cell, Grid};
 
 /// Displays a colored diff in ANSI terminals.
 ///

@@ -1,10 +1,11 @@
-use cell::Cell;
-use error::{GridError, GridParseError, GridSizeError};
 use std::{
     fmt::{self, Display},
     ops::{Index, IndexMut},
     str::FromStr,
 };
+
+use cell::Cell;
+use error::{GridError, GridParseError, GridSizeError};
 use Cell::*;
 
 pub(crate) mod cell;
@@ -224,7 +225,11 @@ impl Grid {
     fn from_parts(cells: Vec<Cell>, size: usize) -> Self {
         assert_ne!(size, 0, "attempted to create an empty grid");
         assert_eq!(size % 2, 0, "attempted to create an odd sized grid");
-        assert_eq!(cells.len(), size * size, "putative grid size does not match the number of cells");
+        assert_eq!(
+            cells.len(),
+            size * size,
+            "putative grid size does not match the number of cells"
+        );
         Self { cells: cells.into_boxed_slice(), size }
     }
 

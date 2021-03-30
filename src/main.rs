@@ -1,10 +1,11 @@
 #![warn(rust_2018_idioms)]
 
-use anyhow::Error;
 use std::{
     fmt::{self, Display},
     io::Read,
 };
+
+use anyhow::Error;
 use takuzu::{ANSIGridDiff, Grid};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");

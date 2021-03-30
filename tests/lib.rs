@@ -23,23 +23,23 @@ lazy_static! {
 }
 
 macro_rules! test_grid {
-    ($test_name:ident, $grid:expr, $out:expr) => {
+    ($test_name:ident, $grid:expr, $output:expr) => {
         #[test]
         fn $test_name() {
             let input = fs::read_to_string(GRIDS_DIR.join($grid)).unwrap();
-            let output = fs::read_to_string(GRIDS_DIR.join($out)).unwrap();
+            let output = fs::read_to_string(GRIDS_DIR.join($output)).unwrap();
             let grid = input.parse::<Grid>().unwrap();
             let solutions = grid.solve().unwrap();
-            let references = output.split("\n\n").collect::<Vec<_>>();
-            assert_eq!(solutions.len(), references.len());
-            for (solution, reference) in solutions.iter().zip(references) {
+            let reference_solutions = output.split("\n\n").collect::<Vec<_>>();
+            assert_eq!(solutions.len(), reference_solutions.len());
+            for (solution, reference) in solutions.iter().zip(reference_solutions) {
                 assert_eq!(solution.to_string().trim_end(), reference.trim_end());
             }
         }
     };
 }
 
-test_grid!(test_grid_1, "grid1", "out1");
-test_grid!(test_grid_2, "grid2", "out2");
-test_grid!(test_grid_3, "grid3", "out3");
-test_grid!(test_grid_4, "grid4", "out4");
+test_grid!(test_grid_1, "grid1", "output1");
+test_grid!(test_grid_2, "grid2", "output2");
+test_grid!(test_grid_3, "grid3", "output3");
+test_grid!(test_grid_4, "grid4", "output4");

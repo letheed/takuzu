@@ -221,11 +221,10 @@ impl Grid {
     /// * size is odd
     /// * the number of cells is not size²
     fn from_parts(cells: Vec<Cell>, size: usize) -> Self {
-        assert_ne!(size, 0, "attempted to create an empty grid");
-        assert_eq!(size % 2, 0, "attempted to create an odd sized grid");
-        assert_eq!(
-            cells.len(),
-            size * size,
+        assert!(size != 0, "attempted to create an empty grid");
+        assert!(size % 2 == 0, "attempted to create an odd sized grid");
+        assert!(
+            cells.len() == size * size,
             "putative grid size does not match the number of cells"
         );
         Self { cells: cells.into_boxed_slice(), size }

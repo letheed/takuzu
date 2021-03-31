@@ -12,7 +12,7 @@ pub enum GridParseError {
     BadSize(GridSizeError),
     /// At least one character other than `0`, `1`, `.` or `\n`
     /// was found in the string.
-    UnexpectedCharacter,
+    UnexpectedCharacter(char),
 }
 
 impl Error for GridParseError {}
@@ -20,8 +20,10 @@ impl Error for GridParseError {}
 impl Display for GridParseError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
-            GridParseError::BadSize(e) => write!(f, "faulty grid size: {}", e),
-            GridParseError::UnexpectedCharacter => write!(f, "found unexpected character(s)"),
+            GridParseError::BadSize(e) => write!(f, "bad grid size: {}", e),
+            GridParseError::UnexpectedCharacter(c) => {
+                write!(f, "found unexpected character `{}`", c)
+            }
         }
     }
 }
@@ -55,10 +57,17 @@ pub enum GridSizeError {
     /// The grid is empty.
     EmptyGrid,
     /// The grid is not a square.
-    /// The field contains the line number that triggered the error.
-    NotASquare(usize),
+    NotASquare {
+        /// Line on which the error occured.
+        line: usize,
+        /// Number of characters found.
+        found: usize,
+        /// Number of characters expected.
+        expected: usize,
+    },
     /// The size of the grid is an odd number.
-    OddNumberSize,
+    /// The field contains the number of lines in the grid.
+    OddNumberSize(usize),
 }
 
 impl Error for GridSizeError {}
@@ -67,8 +76,16 @@ impl Display for GridSizeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             GridSizeError::EmptyGrid => write!(f, "grid is empty"),
-            GridSizeError::NotASquare(n) => write!(f, "grid is not a square (line {})", n),
-            GridSizeError::OddNumberSize => write!(f, "grid size is an odd number"),
+            GridSizeError::NotASquare { line, found, expected } => {
+                write!(
+                    f,
+                    "grid is not a square (line {}, expected {} characters, found {})",
+                    line, expected, found
+                )
+            }
+            GridSizeError::OddNumberSize(n) => {
+                write!(f, "grid size is an odd number ({} lines found)", n)
+            }
         }
     }
 }

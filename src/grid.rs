@@ -75,7 +75,7 @@ impl FromStr for Grid {
         let lines: Vec<_> = s.lines().collect();
         let size = lines.len();
         if size % 2 == 1 {
-            return Err(BadSize(OddNumberSize));
+            return Err(BadSize(OddNumberSize(size)));
         }
         let mut cells = Vec::with_capacity(size * size);
         for (i, line) in lines.iter().enumerate() {
@@ -85,12 +85,12 @@ impl FromStr for Grid {
                     '0' => Zero,
                     '1' => One,
                     '.' => Empty,
-                    _ => return Err(UnexpectedCharacter),
+                    _ => return Err(UnexpectedCharacter(c)),
                 });
                 count += 1;
             }
             if count != size {
-                return Err(BadSize(NotASquare(i)));
+                return Err(BadSize(NotASquare { line: i + 1, found: count, expected: size }));
             }
         }
         Ok(Self::from_parts(cells, size))
@@ -109,7 +109,7 @@ impl Grid {
         if size == 0 {
             Err(EmptyGrid)
         } else if size % 2 == 1 {
-            Err(OddNumberSize)
+            Err(OddNumberSize(size))
         } else {
             Ok(Self::from_parts(vec![Empty; size * size], size))
         }

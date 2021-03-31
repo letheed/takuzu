@@ -1,6 +1,6 @@
 [package]
 name = "takuzu"
-version = "1.0.1"
+version = "1.1.0"
 authors = ["Letheed <letheed@outlook.com>"]
 description = "Takuzu (a.k.a. Binairo) number puzzle solver"
 documentation = "https://docs.rs/takuzu"

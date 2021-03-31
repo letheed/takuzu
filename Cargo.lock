@@ -20,7 +20,7 @@ checksum = "56d855069fafbb9b344c0f962150cd2c1187975cb1c22c1522c240d8c4986714"
 
 [[package]]
 name = "takuzu"
-version = "1.0.1"
+version = "1.1.0"
 dependencies = [
  "anyhow",
  "lazy_static",

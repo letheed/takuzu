@@ -15,8 +15,7 @@ cargo install takuzu
 takuzu [FILE]...
 ```
 
-![solving grid2 screenshot][screenshot]
+<img src="https://raw.githubusercontent.com/letheed/takuzu/master/img/solving_grid2.png" width="372">
 
 [docs]: https://docs.rs/takuzu
 [grids]: https://github.com/letheed/takuzu/tree/master/grids
-[screenshot]: https://raw.githubusercontent.com/letheed/takuzu/master/img/solving_grid2.png

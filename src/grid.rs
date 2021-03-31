@@ -16,13 +16,11 @@ pub(crate) mod error;
 /// It provides the internal logic and other convenience functions.
 /// To create a `Grid` you can:
 ///
-/// * create an empty one yourself with [`new`](#method.new).
-/// * use the [`FromStr`](#impl-FromStr) trait, e.g. by calling [`parse`][parse] on a string.
+/// * create an empty one yourself with [`Grid::new`].
+/// * use the [`FromStr`](#impl-FromStr) trait, e.g. by calling [`parse`](str::parse) on a string.
 ///
 /// You can modify the cells as you like.
-/// Grids that break the rules will not be solved though.
-///
-/// [parse]: https://doc.rust-lang.org/stable/std/primitive.str.html#method.parse
+/// Grids that break the rules will not be solved.
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct Grid {
     cells: Box<[Cell]>,
@@ -175,7 +173,7 @@ impl Grid {
     ///
     /// Returns an error before any attempt at solving if
     /// the grid breaks any of the rules
-    /// (i.e. if [`is_legal`](#method.is_legal) is false).
+    /// (i.e. if [`is_legal`](Grid::is_legal) returns `false`).
     pub fn solve(&self) -> Result<Vec<Self>, GridError> {
         if !self.is_legal() {
             return Err(GridError::Illegal);

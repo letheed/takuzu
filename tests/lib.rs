@@ -1,4 +1,7 @@
 #![warn(rust_2018_idioms)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::cargo)]
+#![warn(clippy::nursery)]
 
 use std::{fs, path::PathBuf, str};
 

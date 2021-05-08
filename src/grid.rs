@@ -6,10 +6,10 @@ use std::{
 
 use cell::Cell;
 use error::{GridError, GridParseError, GridSizeError};
-use Cell::*;
+use Cell::{Empty, One, Zero};
 
-pub(crate) mod cell;
-pub(crate) mod error;
+pub mod cell;
+pub mod error;
 
 /// An opaque container for manipulating takuzu grids.
 ///
@@ -64,8 +64,8 @@ impl FromStr for Grid {
     type Err = GridParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        use GridParseError::*;
-        use GridSizeError::*;
+        use GridParseError::{BadSize, UnexpectedCharacter};
+        use GridSizeError::{EmptyGrid, NotASquare, OddNumberSize};
 
         if s.is_empty() {
             return Err(BadSize(EmptyGrid));
@@ -102,7 +102,7 @@ impl Grid {
     ///
     /// Returns an error if the size is an odd number or 0.
     pub fn new(size: usize) -> Result<Self, GridSizeError> {
-        use GridSizeError::*;
+        use GridSizeError::{EmptyGrid, OddNumberSize};
 
         if size == 0 {
             Err(EmptyGrid)
@@ -114,36 +114,36 @@ impl Grid {
     }
 
     /// Returns the number of rows/columns of the array.
-    pub fn size(&self) -> usize {
+    #[must_use] pub const fn size(&self) -> usize {
         self.size
     }
 
     /// Extracts a slice containing the entire underlying array.
-    pub fn as_slice(&self) -> &[Cell] {
+    #[must_use] pub const fn as_slice(&self) -> &[Cell] {
         &self.cells
     }
 
     /// Extracts a mutable slice of the entire underlying array.
-    pub fn as_mut_slice(&mut self) -> &mut [Cell] {
+    #[must_use] pub fn as_mut_slice(&mut self) -> &mut [Cell] {
         &mut self.cells
     }
 
     /// Returns `true` if the grid contains no `Empty` cell.
-    pub fn is_filled(&self) -> bool {
+    #[must_use] pub fn is_filled(&self) -> bool {
         !self.cells.contains(&Empty)
     }
 
     /// Verifies that the grid does not currently violate any of the rules.
     ///
     /// Returns `true` if the grid is legal.
-    pub fn is_legal(&self) -> bool {
+    #[must_use] pub fn is_legal(&self) -> bool {
         self.check_rule1() && self.check_rule2() && self.check_rule3()
     }
 
     /// Verifies that a certain cell does not violate any of the rules.
     ///
     /// Returns `true` if the value is legal.
-    pub fn is_cell_legal(&self, coord: (usize, usize)) -> bool {
+    #[must_use] pub fn is_cell_legal(&self, coord: (usize, usize)) -> bool {
         self[coord].is_empty() || {
             self.check_cell_rule1(coord)
                 && self.check_cell_rule2(coord)
@@ -153,7 +153,7 @@ impl Grid {
 
     /// Returns the coordinates of the first `Empty` cell
     /// or `None` if the grid is filled.
-    pub fn next_empty(&self) -> Option<(usize, usize)> {
+    #[must_use] pub fn next_empty(&self) -> Option<(usize, usize)> {
         for (i, cell) in self.cells.iter().enumerate() {
             if cell.is_empty() {
                 let row = i / self.size;
@@ -174,6 +174,7 @@ impl Grid {
     /// Returns an error before any attempt at solving if
     /// the grid breaks any of the rules
     /// (i.e. if [`is_legal`](Grid::is_legal) returns `false`).
+    #[allow(clippy::missing_panics_doc)]
     pub fn solve(&self) -> Result<Vec<Self>, GridError> {
         if !self.is_legal() {
             return Err(GridError::Illegal);

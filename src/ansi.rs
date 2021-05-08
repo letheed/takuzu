@@ -57,6 +57,7 @@ use crate::{Cell, Grid};
 /// was overwritten. If `reference` is the original grid and `self`
 /// is a solution, this should *never* happen.
 #[derive(Copy, Clone, Debug)]
+#[allow(clippy::module_name_repetitions)]
 pub struct AnsiGridDiff<'a>(pub &'a Grid, pub &'a Grid);
 
 impl Display for AnsiGridDiff<'_> {

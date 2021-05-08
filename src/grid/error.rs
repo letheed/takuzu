@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 use std::{
     convert::From,
     error::Error,
@@ -30,7 +32,7 @@ impl Display for GridParseError {
 
 impl From<GridSizeError> for GridParseError {
     fn from(err: GridSizeError) -> Self {
-        GridParseError::BadSize(err)
+        Self::BadSize(err)
     }
 }
 

@@ -1,4 +1,7 @@
 #![warn(rust_2018_idioms)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::cargo)]
+#![warn(clippy::nursery)]
 
 use std::{
     fmt::{self, Display},
@@ -78,15 +81,6 @@ fn read_to_string(filename: &str) -> std::io::Result<String> {
 /// If `stdout` is a terminal, prints the grids with colors highlighting the
 /// differences with the unsolved original grid.
 fn print_solutions(mut filename: &str, grid: &Grid, solutions: &[Grid]) {
-    if filename == "-" {
-        filename = "(stdin)";
-    }
-    if isatty_stdout() {
-        print_loop(filename, solutions, |solution| AnsiGridDiff(&grid, solution));
-    } else {
-        print_loop(filename, solutions, |solution| solution);
-    };
-
     #[inline]
     fn print_loop<'a, D>(filename: &str, solutions: &'a [Grid], format: impl Fn(&'a Grid) -> D)
     where D: Display {
@@ -101,6 +95,15 @@ fn print_solutions(mut filename: &str, grid: &Grid, solutions: &[Grid]) {
             }
         }
     }
+
+    if filename == "-" {
+        filename = "(stdin)";
+    }
+    if isatty_stdout() {
+        print_loop(filename, solutions, |solution| AnsiGridDiff(grid, solution));
+    } else {
+        print_loop(filename, solutions, |solution| solution);
+    };
 }
 
 /// Displays the causes of an `Error` recursively.

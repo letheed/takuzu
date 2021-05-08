@@ -1,5 +1,8 @@
 #![warn(missing_docs)]
 #![warn(rust_2018_idioms)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::cargo)]
+#![warn(clippy::nursery)]
 #![deny(unsafe_code)]
 
 //! A library for solving Takuzu (a.k.a. Binairo) number puzzles.

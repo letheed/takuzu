@@ -1,6 +1,6 @@
 use std::{default::Default, ops::Not};
 
-use Cell::*;
+use Cell::{Empty, One, Zero};
 
 ///  An enum representing the state of a cell.
 #[allow(missing_docs)]
@@ -31,12 +31,12 @@ impl Not for Cell {
 
 impl Cell {
     /// Returns `true` if a cell is `Empty`.
-    pub fn is_empty(self) -> bool {
+    #[must_use] pub const fn is_empty(self) -> bool {
         matches!(self, Empty)
     }
 
     /// Returns `true` if a cell is `Zero` or `One`.
-    pub fn is_filled(self) -> bool {
+    #[must_use] pub const fn is_filled(self) -> bool {
         !matches!(self, Empty)
     }
 }

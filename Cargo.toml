@@ -7,6 +7,7 @@ documentation = "https://docs.rs/takuzu"
 repository = "https://github.com/letheed/takuzu"
 readme = "README.md"
 keywords = ["takuzu", "binairo", "solver", "puzzle", "binary"]
+categories = ["games"]
 license = "MIT"
 edition = "2018"
 

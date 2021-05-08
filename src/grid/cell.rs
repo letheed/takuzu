@@ -31,12 +31,14 @@ impl Not for Cell {
 
 impl Cell {
     /// Returns `true` if a cell is `Empty`.
-    #[must_use] pub const fn is_empty(self) -> bool {
+    #[must_use]
+    pub const fn is_empty(self) -> bool {
         matches!(self, Empty)
     }
 
     /// Returns `true` if a cell is `Zero` or `One`.
-    #[must_use] pub const fn is_filled(self) -> bool {
+    #[must_use]
+    pub const fn is_filled(self) -> bool {
         !matches!(self, Empty)
     }
 }
